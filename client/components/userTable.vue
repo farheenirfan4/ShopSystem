@@ -130,8 +130,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <VCard class="mt-8">
-    <VCardTitle class="text-h4 font-weight-bold mb-4">CMS User Management</VCardTitle>
+  <VCard class="mt-16">
+    <VCardTitle class="text-h5 font-weight-bold mb-4">CMS User Management</VCardTitle>
     
     <VDataTable
       :headers="headersWithActions"

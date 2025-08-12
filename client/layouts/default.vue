@@ -3,7 +3,6 @@
     <v-app-bar app dark style="background-color: #000000; color: white;">
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-toolbar-title class="d-flex align-center">
-      
         <span class="text-h6">Shop Management System</span>
       </v-toolbar-title>
     </v-app-bar>
@@ -12,8 +11,8 @@
       app
       v-model="drawer"
       :permanent="drawer"
-      width="300"
-      class="pa-2"
+      width="320"
+      class="pa-3"
       style="background-color: white !important;"
       transition="slide-x-transition"
     >
@@ -35,16 +34,18 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main class="pa-4">
+    <v-main :style="mainContentStyle" class="pa-6">
       <slot />
     </v-main>
   </v-app>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useDisplay } from 'vuetify'
 
 const drawer = ref(true)
+const { mdAndUp } = useDisplay()
 
 const menuItems = [
   { title: 'Dashboard', to: '/dashboard', icon: 'mdi-view-dashboard' },
@@ -56,6 +57,15 @@ const menuItems = [
   { title: 'Log out', to: '/signin', icon: 'mdi-login-variant' },
 
 ]
+
+// Dynamically compute the margin for the main content
+const mainContentStyle = computed(() => {
+  // Add a margin only on medium and larger screens where the drawer is permanent
+  if (mdAndUp.value && drawer.value) {
+    return { 'margin-left': '320px' };
+  }
+  return {};
+});
 </script>
 
 <style scoped>
@@ -65,8 +75,8 @@ const menuItems = [
 }
 
 .nav-link {
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }

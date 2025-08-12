@@ -54,8 +54,8 @@ export const offers = (app: Application) => {
       remove: []
     },
     after: {
-      find: [attachOfferStatus],
-      get: [attachOfferStatus],
+     // find: [attachOfferStatus],
+      //get: [attachOfferStatus],
       create: [changelogHook],
       patch: [changelogHook],
       update: [changelogHook],
