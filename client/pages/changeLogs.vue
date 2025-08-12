@@ -1,0 +1,3 @@
+<template>
+    <changeLogTable></changeLogTable>
+</template>

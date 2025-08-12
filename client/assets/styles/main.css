@@ -1,0 +1,8 @@
+/* assets/styles/main.css */
+* {
+  font-family: 'Poppins', sans-serif !important;
+  
+}
+.custom-border .v-field__outline {
+  border-color: #000000 !important; /* black border */
+}
