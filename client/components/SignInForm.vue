@@ -62,7 +62,7 @@ const handleLogin = async () => {
           label="Password"
           :type="isPasswordVisible ? 'text' : 'password'"
           outlined
-          :append-inner-icon="isPasswordVisible ? 'ri-eye-off-line' : 'ri-eye-line'"
+          :append-inner-icon="isPasswordVisible ? 'mdi-eye-closed' : 'mdi-eye-outline'"
           @click:append-inner="isPasswordVisible = !isPasswordVisible"
         />
 
