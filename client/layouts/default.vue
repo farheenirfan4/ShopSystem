@@ -43,10 +43,10 @@ import { ref } from 'vue'
 const drawer = ref(true)
 
 const menuItems = [
-  { title: 'Dashboard', to: '/dashboard' },
+  { title: 'Dashboard', to: '/admin' },
   { title: 'See Offers', to: '/offers' },
-  { title: 'Set Personas', to: '/create-level' },
-  { title: 'Display Configs', to: '/create-leaderboard' },
+  { title: 'Set Personas', to: '/persona' },
+  { title: 'Display Configs', to: '/displayConfigs' },
 ]
 </script>
 
