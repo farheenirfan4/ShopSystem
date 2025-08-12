@@ -223,17 +223,12 @@ onUnmounted(() => {
 
 
 <template>
-  <div class="pa-4">
+  
     <!-- Heading -->
     
 
-    <!-- Loading / Error Alerts -->
-    <v-alert v-if="loading" type="info" variant="tonal" class="mb-3">
-      Loading offers...
-    </v-alert>
-    <v-alert v-if="error" type="error" variant="tonal" class="mb-3">
-      {{ error }}
-    </v-alert>
+    
+    
 
 
     <VContainer style="background-color: white; border-radius: 10px;" >
@@ -268,78 +263,12 @@ onUnmounted(() => {
     </div>
 
     <!-- Offers Table -->
-    <v-data-table
-      v-if="offersWithStatus.length"
-      :headers="headers"
-      :items="offersWithStatus"
-      :items-per-page="5"
-      class="elevation-1 custom-header"
-      
-    >
-
-    <template #item.title="{ item }">
-  <a href="javascript:void(0)" @click="openUserDialog(item.personasId)">
-    {{ item.title }}
-  </a>
-</template>
-      <!-- Custom cell for promotionalTags -->
-      <template #item.promotionalTags="{ item }">
-        <v-chip-group column>
-          <v-chip
-            v-for="(tag, index) in item.promotionalTags"
-            :key="index"
-            size="small"
-            color="primary"
-            class="ma-1"
-          >
-            {{ tag }}
-          </v-chip>
-        </v-chip-group>
-      </template>
-
-      <!-- Actions column -->
-      <template #item.actions="{ item }">
-        <v-btn
-          size="small"
-          color="black"
-          icon="ri-edit-line"
-          variant="text"
-          @click="editOffer(item)"
-        ></v-btn>
-        <v-btn
-          size="small"
-          color="error"
-          icon="ri-delete-bin-5-line"
-          variant="text"
-          @click="deleteOffer(item)"
-        ></v-btn>
-      </template>
-
-      <template #item.startDateUTC="{ item }">
-  <v-chip  size="small">
-    {{ new Date(item.startDateUTC).toLocaleString() }}
-  </v-chip>
-</template>
-
-<template #item.endDateUTC="{ item }">
-  <v-chip  size="small">
-    {{ new Date(item.endDateUTC).toLocaleString() }}
-  </v-chip>
-</template>
-    </v-data-table>
+   
 
     <!-- Empty State -->
-    <v-alert
-      v-else-if="!loading"
-      type="warning"
-      variant="tonal"
-      class="mt-3"
-    >
-      No offers found.
-    </v-alert>
 
     </VContainer>
-    <!-- Header with Add Button -->
+   
     
 
     <v-dialog v-model="isAddDialogOpen" max-width="600" persistent>
@@ -514,7 +443,7 @@ onUnmounted(() => {
 </v-dialog>
 
 
-  </div>
+  
 </template>
 
 <style scoped>

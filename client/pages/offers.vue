@@ -1,1 +1,5 @@
-<template></template>
+<template>
+  <OffersTable>
+    
+  </OffersTable>
+</template>

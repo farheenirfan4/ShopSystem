@@ -1,5 +1,5 @@
 import { ref } from "vue"
-import { offersSchema, Offer } from "../../schemas/offerSchema"
+import { offersSchema, type Offer } from "../../schemas/offerSchema"
 import { useAuth } from "../Authentication/useAuth" // <-- get token from here
 
 // Setup AJV

@@ -4,5 +4,5 @@ import SignInForm from '~/components/SignInForm.vue';
 </script>
 
 <template>
-  <SignInForm />
+  <SignInForm></SignInForm>
 </template>

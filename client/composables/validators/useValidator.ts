@@ -1,5 +1,5 @@
 // composables/useValidator.ts
-import ajv from "../../src/plugins/ajv/ajv";
+import ajv from '../../plugins/ajv'
 import { loginSchema } from "../../schemas/loginSchema";
 
 const validateLogin = ajv.compile(loginSchema);

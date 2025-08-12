@@ -4,12 +4,10 @@ import axios from 'axios'
 
 const API_URL = 'http://localhost:3030'
 
-
-
 interface LoginResponse {
   accessToken: string
   authentication: { strategy: string }
-  user: { id: string;username: string; email: string; roles?: string[] }
+  user: { id: string; username: string; email: string; roles?: string[] }
 }
 
 const user = ref<LoginResponse['user'] | null>(null)
@@ -17,7 +15,25 @@ const token = ref<string | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
+const loadUserFromStorage = () => {
+  // Ensure we are in the browser
+  if (typeof window === 'undefined') return
+
+  const savedToken = localStorage.getItem('feathers-jwt')
+  const savedUser = localStorage.getItem('user')
+
+  if (savedToken && savedUser) {
+    token.value = savedToken
+    user.value = JSON.parse(savedUser)
+  }
+}
+
 export function useAuth() {
+  // Only try to load in browser
+  if (process.client && (!token.value || !user.value)) {
+    loadUserFromStorage()
+  }
+
   const login = async (email: string, password: string) => {
     loading.value = true
     error.value = null
@@ -31,12 +47,10 @@ export function useAuth() {
       token.value = response.data.accessToken
       user.value = response.data.user
 
-      console.log(`Logged in as:`, user.value.roles)
-      //alert('Sign in')
-
-      // Save both token and user
-      localStorage.setItem('feathers-jwt', token.value)
-      localStorage.setItem('user', JSON.stringify(user.value))
+      if (process.client) {
+        localStorage.setItem('feathers-jwt', token.value)
+        localStorage.setItem('user', JSON.stringify(user.value))
+      }
 
       return user.value
     } catch (err: any) {
@@ -50,17 +64,9 @@ export function useAuth() {
   const logout = () => {
     token.value = null
     user.value = null
-    localStorage.removeItem('feathers-jwt')
-    localStorage.removeItem('user')
-  }
-
-  const loadUserFromStorage = () => {
-    const savedToken = localStorage.getItem('feathers-jwt')
-    const savedUser = localStorage.getItem('user')
-
-    if (savedToken && savedUser) {
-      token.value = savedToken
-      user.value = JSON.parse(savedUser)
+    if (process.client) {
+      localStorage.removeItem('feathers-jwt')
+      localStorage.removeItem('user')
     }
   }
 
@@ -70,7 +76,6 @@ export function useAuth() {
     loading,
     error,
     login,
-    logout,
-    loadUserFromStorage
+    logout
   }
 }
