@@ -36,39 +36,53 @@ export function stringifyProductName(name: string) {
 }
 
 export function getOfferStatus(offer: Offer, now: Date = new Date()): OfferStatus {
-  const campaignStart = new Date(offer.startDateUTC);
-  const campaignEnd = new Date(offer.endDateUTC);
+  if (!offer.startDateUTC || !offer.endDateUTC) return 'inactive';
 
-  // If now is before campaign starts
+  const campaignStart = new Date(offer.startDateUTC); // includes time
+  const campaignEnd = new Date(offer.endDateUTC);     // includes time
+
+  // Check full date-time first
   if (now < campaignStart) return 'upcoming';
-  // If now is after campaign ends
   if (now > campaignEnd) return 'expired';
 
-  // If offer has no repeat patterns or daily
+  // No repeat or daily repeat
   if (offer.repeatPatterns === 'none' || offer.repeatPatterns === 'daily') {
-    return 'active';
+    // Check if current time is within the campaign start/end hours
+    const startTime = campaignStart.getTime();
+    const endTime = campaignEnd.getTime();
+    return now.getTime() >= startTime && now.getTime() <= endTime ? 'active' : 'inactive';
   }
 
   // Weekly repeat
   if (offer.repeatPatterns === 'weekly') {
-    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const daysOfWeek = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
     const nowDay = now.getDay();
     const repeatDays = (offer.repeatDetails || []).map(d => daysOfWeek.indexOf(d.toLowerCase()));
-    return repeatDays.includes(nowDay) ? 'active' : 'inactive';
+    const isDayActive = repeatDays.includes(nowDay);
+
+    // Also check if current time is within campaign start/end time for today
+    const startTime = campaignStart.getTime();
+    const endTime = campaignEnd.getTime();
+    return isDayActive && now.getTime() >= startTime && now.getTime() <= endTime ? 'active' : 'inactive';
   }
 
   // Monthly repeat
   if (offer.repeatPatterns === 'monthly') {
     const monthsOfYear = [
-      'january', 'february', 'march', 'april', 'may', 'june',
-      'july', 'august', 'september', 'october', 'november', 'december'
+      'january','february','march','april','may','june',
+      'july','august','september','october','november','december'
     ];
     const nowMonth = now.getMonth();
     const repeatMonths = (offer.repeatDetails || []).map(m => monthsOfYear.indexOf(m.toLowerCase()));
-    return repeatMonths.includes(nowMonth) ? 'active' : 'inactive';
+    const isMonthActive = repeatMonths.includes(nowMonth);
+
+    const startTime = campaignStart.getTime();
+    const endTime = campaignEnd.getTime();
+    return isMonthActive && now.getTime() >= startTime && now.getTime() <= endTime ? 'active' : 'inactive';
   }
 
   return 'inactive';
 }
+
 
 

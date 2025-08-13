@@ -470,7 +470,7 @@ onMounted(async () => {
     ]);
   } catch (err) {
     console.error("Error fetching initial data:", err);
-    snackbar.value = { show: true, text: 'Error fetching initial data. Please check the console.', color: 'red', timeout: 5000 };
+    snackbar.value = { show: true, text: 'Error fetching initial data. Please check the console.', color: 'red', timeout: 3000 };
   }
 
 
