@@ -36,55 +36,39 @@ export function stringifyProductName(name: string) {
 }
 
 export function getOfferStatus(offer: Offer, now: Date = new Date()): OfferStatus {
-  const campaignStart = new Date(offer.startDateUTC); // overall offer start date
-  const campaignEnd = new Date(offer.endDateUTC);     // overall offer end date
+  const campaignStart = new Date(offer.startDateUTC);
+  const campaignEnd = new Date(offer.endDateUTC);
 
-  // 1. Expired if campaign is completely over
+  // If now is before campaign starts
+  if (now < campaignStart) return 'upcoming';
+  // If now is after campaign ends
   if (now > campaignEnd) return 'expired';
 
-  // 2. Upcoming if campaign hasn't started yet
-  if (now < campaignStart) return 'upcoming';
-
-  // 3. Extract local time components
-  const nowDay = now.getDay();   // 0 = Sunday
-  const nowMonth = now.getMonth(); // 0 = Jan
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
-
-  // Extract hours/minutes from offer start/end times (local)
-  const startTime = new Date(offer.startDateUTC);
-  const endTime = new Date(offer.endDateUTC);
-  const startMinutes = startTime.getHours() * 60 + startTime.getMinutes();
-  const endMinutes = endTime.getHours() * 60 + endTime.getMinutes();
-
-  const isTimeActive = nowMinutes >= startMinutes && nowMinutes <= endMinutes;
-  const repeatDetailsArray = Array.isArray(offer.repeatDetails) ? offer.repeatDetails : [];
-
-  switch (offer.repeatPatterns) {
-    case 'none':
-      return isTimeActive ? 'active' : 'inactive'; // inactive if within campaign but outside time
-
-    case 'daily':
-      // No 'upcoming' here as per your requirement
-      return isTimeActive ? 'active' : 'inactive';
-
-    case 'weekly':
-      const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-      const repeatDays = repeatDetailsArray.map(d => daysOfWeek.indexOf(d.toLowerCase()));
-      if (repeatDays.includes(nowDay)) {
-        return isTimeActive ? 'active' : 'inactive';
-      }
-      return 'upcoming';
-
-    case 'monthly':
-      const monthsOfYear = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
-      const repeatMonths = repeatDetailsArray.map(m => monthsOfYear.indexOf(m.toLowerCase()));
-      if (repeatMonths.includes(nowMonth)) {
-        return isTimeActive ? 'active' : 'inactive';
-      }
-      return 'upcoming';
-
-    default:
-      return 'inactive';
+  // If offer has no repeat patterns or daily
+  if (offer.repeatPatterns === 'none' || offer.repeatPatterns === 'daily') {
+    return 'active';
   }
+
+  // Weekly repeat
+  if (offer.repeatPatterns === 'weekly') {
+    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const nowDay = now.getDay();
+    const repeatDays = (offer.repeatDetails || []).map(d => daysOfWeek.indexOf(d.toLowerCase()));
+    return repeatDays.includes(nowDay) ? 'active' : 'inactive';
+  }
+
+  // Monthly repeat
+  if (offer.repeatPatterns === 'monthly') {
+    const monthsOfYear = [
+      'january', 'february', 'march', 'april', 'may', 'june',
+      'july', 'august', 'september', 'october', 'november', 'december'
+    ];
+    const nowMonth = now.getMonth();
+    const repeatMonths = (offer.repeatDetails || []).map(m => monthsOfYear.indexOf(m.toLowerCase()));
+    return repeatMonths.includes(nowMonth) ? 'active' : 'inactive';
+  }
+
+  return 'inactive';
 }
+
 

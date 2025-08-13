@@ -1,5 +1,5 @@
 <template>
-  <v-container style="height: 600px; width: 100%;">
+  <v-container style="height: 600px; width: 100%;" class="mt-16">
     <h2>User Signups Over Time</h2>
     <div v-if="chartData.labels?.length" style="position: relative; height:100%; width:100%">
       <Bar :data="chartData" :options="chartOptions" />

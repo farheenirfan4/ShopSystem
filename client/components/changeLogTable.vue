@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-4 rounded-xl" elevation="2">
+  <v-card class="pa-4 rounded-xl mt-16" elevation="2">
     <v-card-title class="d-flex justify-space-between align-center">
       <span class="text-h6 font-weight-bold">Change Log Table</span>
       <v-text-field

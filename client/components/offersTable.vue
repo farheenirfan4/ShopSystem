@@ -26,10 +26,44 @@
         </template>
         <!-- Status Chip with dynamic color -->
         <template #item.status="{ item }">
-          <v-chip text-color="white" size="small" :color="getStatusColor(item.status)">
+          <v-chip text-color="white" size="small" >
             {{ item.status }}
           </v-chip>
         </template>
+        <template #item.promotionalTags="{ item }">
+  <div style="display: flex; gap: 2px; flex-wrap: wrap;">
+    <v-chip
+      v-for="(tag, index) in item.promotionalTags || []"
+      :key="index"
+      size = "small"
+      color="black"
+      text-color="white"
+    >
+      {{ tag }}
+    </v-chip>
+  </div>
+</template>
+
+<template #item.repeatDetails="{ item }">
+  <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+    <v-chip
+      v-for="(detail, index) in item.repeatDetails || []"
+      :key="index"
+      size="small"
+      text-color="white"
+    >
+      {{ detail }}
+    </v-chip>
+  </div>
+</template>
+
+        <template #item.startDateUTC="{ item }">
+  {{ formatUTCToLocal(item.startDateUTC) }}
+</template>
+
+<template #item.endDateUTC="{ item }">
+  {{ formatUTCToLocal(item.endDateUTC) }}
+</template>
 
         <!-- Actions -->
         <template #item.actions="{ item }">
@@ -303,10 +337,15 @@ const offersWithStatus = computed(() => {
   return offers.value.map(offer => ({
     ...offer,
     status: getOfferStatus(offer),
-    startDateUTC: new Date(offer.startDateUTC).toLocaleString(),
-    endDateUTC: new Date(offer.endDateUTC).toLocaleString(),
   }));
 });
+
+
+function formatUTCToLocal(utcDate: string | undefined) {
+  if (!utcDate) return '';
+  const date = new Date(utcDate); // UTC string
+  return date.toLocaleString(); // converts to user's local timezone
+}
 
 const repeatDetailsOptions = computed(() => {
   const pattern = newOffer.value.repeatPatterns;
@@ -439,7 +478,13 @@ onMounted(async () => {
   displayConfigIds.value = getDisplayConfigIds();
 
   // Polling for offers
-  let updateInterval = setInterval(fetchOffers, 60000); // Poll every 60 seconds
+  let updateInterval = setInterval(fetchOffers, 30000); // Poll every 60 seconds
   onBeforeUnmount(() => clearInterval(updateInterval));
+
+  onMounted(() => {
+  fetchOffers() // initial fetch
+  const updateInterval = setInterval(fetchOffers, 30000) // every 30s
+  onBeforeUnmount(() => clearInterval(updateInterval))
+})
 });
 </script>

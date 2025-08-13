@@ -11,7 +11,7 @@
       app
       v-model="drawer"
       :permanent="drawer"
-      width="320"
+      width="300"
       class="pa-3"
       style="background-color: white !important;"
       transition="slide-x-transition"
@@ -75,8 +75,8 @@ const mainContentStyle = computed(() => {
 }
 
 .nav-link {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
