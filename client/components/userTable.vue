@@ -155,34 +155,60 @@ onMounted(async () => {
 
     <!-- Add User Button -->
     <VCardActions>
-      <VBtn style="background-color: #8C57FF;" color="white" class="ms-2 mb-2" @click="isAddDialogOpen = true">
-        Add New User
-      </VBtn>
+      <VBtn
+  color="white"
+  style="letter-spacing: normal; padding: 8px 20px; min-width: 140px; font-weight: 500;"
+  class="ms-2 mb-2"
+  @click="isAddDialogOpen = true"
+>
+  Add New User
+</VBtn>
     </VCardActions>
 
     <!-- Add User Dialog -->
     <VDialog v-model="isAddDialogOpen" max-width="500px">
-      <VCard>
-        <VCardTitle class="text-h4 font-weight-bold mb-4 ma-2">Add User</VCardTitle>
-        <VCardText>
-          <div class="d-flex flex-column gap-4">
-            <VTextField v-model="newUser.username" label="Username" required />
-            <VTextField v-model="newUser.email" label="Email" required />
-            <VTextField v-model="newUser.password" label="Password" type="password" required />
-            <VSelect v-model="newUser.roles" :items="['admin', 'editor', 'viewer']" label="Role" multiple />
-          </div>
-        </VCardText>
-        <VCardActions>
-          <VBtn @click="isAddDialogOpen = false">Cancel</VBtn>
-          <VBtn style="background-color: #8C57FF;" color="white" @click="handleAddUser">Save</VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
+  <VCard>
+    <VCardTitle class="text-h5 font-weight-bold mb-2 ma-2">
+      Add User
+    </VCardTitle>
+
+    <VCardText>
+      <div class="d-flex flex-column">
+        <VTextField v-model="newUser.username" label="Username" required />
+        <VTextField v-model="newUser.email" label="Email" required />
+        <VTextField v-model="newUser.password" label="Password" type="password" required />
+        <VSelect
+          v-model="newUser.roles"
+          :items="['admin', 'editor', 'viewer']"
+          label="Role"
+          multiple
+        />
+      </div>
+    </VCardText>
+
+    <VCardActions class="pa-4 pt-0" style="justify-content: flex-end; gap: 4px;">
+      <VBtn
+        variant="flat"
+        color="white"
+        style="letter-spacing: normal"
+        @click="isAddDialogOpen = false"
+      >
+        Cancel
+      </VBtn>
+      <VBtn
+        style="letter-spacing: normal"
+        @click="handleAddUser"
+      >
+        Save
+      </VBtn>
+    </VCardActions>
+  </VCard>
+</VDialog>
 
     <!-- Edit User Dialog -->
     <VDialog v-model="isEditDialogOpen" max-width="500px">
       <VCard>
-        <VCardTitle class="text-h4 font-weight-bold mb-4 ma-2">Edit User</VCardTitle>
+        <VCardTitle class="text-h4 font-weight-bold mb-2 ma-2">Edit User</VCardTitle>
         <VCardText>
           <div class="d-flex flex-column gap-4">
             <VTextField v-model="editUser.username" label="Username" required />
@@ -192,7 +218,7 @@ onMounted(async () => {
         </VCardText>
         <VCardActions>
           <VBtn @click="isEditDialogOpen = false">Cancel</VBtn>
-          <VBtn style="background-color: #8C57FF;" color="white" @click="handleUpdateUser">Update</VBtn>
+          <VBtn style="letter-spacing: normal" color="white" @click="handleUpdateUser">Update</VBtn>
         </VCardActions>
       </VCard>
     </VDialog>

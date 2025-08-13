@@ -1,4 +1,3 @@
-
 // client/plugins/vuetify.ts
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
@@ -17,12 +16,26 @@ export default defineNuxtPlugin(nuxtApp => {
       defaultTheme: 'light',
     },
     defaults: {
+      // Global styles for all components
       global: {
         style: {
           fontFamily: 'Poppins, sans-serif'
         }
+      },
+      // Component-specific defaults
+      VTextField: {
+        variant: 'outlined',
+        density: 'compact',
+      },
+      VSelect: {
+        variant: 'outlined',
+        density: 'compact',
+      },
+      VTextarea: {
+        variant: 'outlined',
+        density: 'compact',
       }
-    },
+    }
   })
 
   nuxtApp.vueApp.use(vuetify)

@@ -6,7 +6,7 @@
       </v-col>
 
       <v-col cols="12" md="3">
-        <v-card class="pa-4 mt-10" style="background-color: white;">
+        <v-card class="pa-4 mt-16" style="background-color: white;">
           <h3 class="text-h6 mb-4">Summary</h3>
           
           <v-card class="pa-4 mb-4 text-center" style="background-color: black; color: white;">

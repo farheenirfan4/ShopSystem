@@ -1,17 +1,16 @@
 <template>
   <v-container class="mt-8">
     <v-card>
-      <v-card-title>
-        Offers List
-        <v-spacer />
-        <!-- Add Offer Button -->
-        <v-btn color="green" @click="openAddDialog">
-          Add Offer
-        </v-btn>
-        <v-btn color="primary" @click="fetchOffers">
-          Refresh
-        </v-btn>
-      </v-card-title>
+      <v-card-title class="d-flex align-center">
+  <span class="text-h5 font-weight-bold">Offers List</span>
+  <v-spacer />
+  <v-btn color="primary" style="letter-spacing: normal" @click="openAddDialog">
+    Add Offer
+  </v-btn>
+  <!-- <v-btn color="primary" @click="fetchOffers">
+    Refresh
+  </v-btn>-->
+</v-card-title>
 
       <v-data-table
         :headers="headers"
@@ -21,7 +20,7 @@
         class="elevation-1"
       >
         <template #item.title="{ item }">
-          <a href="javascript:void(0)" @click="openUserDialog(item.personasId)">
+          <a href="javascript:void(0)"  style="color: black; font-weight: bold; text-decoration: none;" @click="openUserDialog(item.personasId)">
             {{ item.title }}
           </a>
         </template>
@@ -34,12 +33,21 @@
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <v-btn icon color="primary" @click="editOffer(item)">
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn icon color="red" @click="deleteOffer(item.id)">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
+          <div style="display: flex; gap: 0px;">
+  <VBtn
+    icon="mdi-pencil"
+    size="small"
+    color="white"
+    variant="flat"
+    @click="editOffer(item)"
+  />
+  <VBtn
+    size="small"
+    icon="mdi-delete-outline"
+    color="red"
+    @click="deleteOffer(item.id)"
+  />
+</div>
         </template>
       </v-data-table>
     </v-card>
@@ -48,14 +56,14 @@
     <v-dialog v-model="isAddDialogOpen" max-width="600" persistent>
       <v-card>
         <!-- Title -->
-        <v-card-title class="text-h4 font-weight-bold pa-4">
+        <v-card-title class="text-h5 font-weight-bold pa-4">
           {{ editModel ? "Edit Offer" : "Add an Offer" }}
         </v-card-title>
 
         <v-card-text>
           <!-- Row 1: Title + Price -->
-          <v-row>
-            <v-col cols="6">
+          <v-row no-gutters dense class="mt-0" >
+            <v-col cols="6" class="pr-2">
               <v-text-field label="Title" v-model="newOffer.title" outlined></v-text-field>
             </v-col>
             <v-col cols="6">
@@ -64,15 +72,15 @@
           </v-row>
 
           <!-- Row 2: Description -->
-          <v-row>
+          <v-row no-gutters dense class="mt-2">
             <v-col cols="12">
               <v-textarea label="Description" v-model="newOffer.description" outlined></v-textarea>
             </v-col>
           </v-row>
 
           <!-- Row 3: Discount + Promotional Tags -->
-          <v-row>
-            <v-col cols="6">
+          <v-row no-gutters dense class="mt-2">
+            <v-col cols="6" class="pr-2">
               <v-text-field label="Discount (%)" type="number" v-model="newOffer.discountPercentage" outlined></v-text-field>
             </v-col>
             <v-col cols="6">
@@ -85,15 +93,15 @@
           </v-row>
 
           <!-- Row 4: Product -->
-          <v-row>
+          <v-row no-gutters dense class="mt-2">
             <v-col cols="12">
               <v-text-field label="Product" v-model="newOffer.product" outlined></v-text-field>
             </v-col>
           </v-row>
 
           <!-- Row 5: Repeat Patterns + Details -->
-          <v-row>
-            <v-col cols="6">
+          <v-row no-gutters dense class="mt-2">
+            <v-col cols="6" class="pr-2">
               <v-select
                 label="Repeat Patterns"
                 v-model="newOffer.repeatPatterns"
@@ -113,8 +121,8 @@
           </v-row>
 
           <!-- Row 6: Persona + Display Config -->
-          <v-row>
-            <v-col cols="6">
+          <v-row no-gutters dense class="mt-2">
+            <v-col cols="6" class="pr-2">
               <v-select
                 :items="personaIds"
                 v-model="newOffer.personasId"
@@ -133,8 +141,8 @@
           </v-row>
 
           <!-- Row 7: Dates -->
-          <v-row>
-            <v-col cols="6">
+          <v-row no-gutters dense class="mt-2">
+            <v-col cols="6" class="pr-2">
               <v-text-field
                 label="Start Date UTC"
                 type="datetime-local"
@@ -155,16 +163,14 @@
           </v-row>
         </v-card-text>
 
-        <v-divider></v-divider>
-
         <!-- Actions -->
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn variant="text" @click="isAddDialogOpen = false">Cancel</v-btn>
+          <v-btn style="letter-spacing: normal" variant="flat" color="white" @click="isAddDialogOpen = false">Cancel</v-btn>
           <v-btn
-            style="background-color: pink"
+            style="letter-spacing: normal"
             color="white"
-            class="ma-2 p-4"
+            class=" p-4"
             @click="saveOffer"
           >
             {{ editModel ? "Update" : "Save" }}

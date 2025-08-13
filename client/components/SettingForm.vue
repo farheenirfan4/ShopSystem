@@ -1,20 +1,6 @@
 <template>
   <div>
-    <VTabs
-      v-model="activeTab"
-      show-arrows
-      class="v-tabs-pill"
-      style="letter-spacing: normal"
-      
-    >
-      <VTab
-        v-for="item in tabs"
-        :key="item.icon"
-        :value="item.tab"
-      >
-        {{ item.title }}
-      </VTab>
-    </VTabs>
+    
 
     <VWindow
       v-model="activeTab"

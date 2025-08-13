@@ -109,8 +109,15 @@ await useAsyncData('personas', async () => {
   <VContainer class="mt-8">
     <VCard>
       <VCardTitle class="d-flex justify-space-between align-center">
-        <span class="text-h4 font-weight-bold mb-4 ma-2">Personas Configuration</span>
-        <VBtn class="square-btn" icon="mdi-plus" color="primary" @click="openCreateDialog" />
+        <span class="text-h5 font-weight-bold mb-4 ma-2">Personas Configuration</span>
+        <VBtn
+          color="black"
+          style="letter-spacing: normal; padding: 8px 20px; min-width: 140px; font-weight: 500;"
+          class="ms-2 mb-2"
+          @click="openCreateDialog"
+       >
+  Add Persona
+</VBtn>
       </VCardTitle>
 
       <VCardText>
@@ -143,7 +150,7 @@ await useAsyncData('personas', async () => {
               <td>{{ item.minDeposits }} - {{ item.maxDeposits }}</td>
               <td>{{ new Date(item.createdAt).toLocaleString() }}</td>
               <td>
-                <VBtn small icon="mdi-pencil" variant="flat" color="purple" @click="openEditDialog(item)" />
+                <VBtn icon="mdi-pencil" size="small" color="white" variant="flat" @click="openEditDialog(item)" />
               </td>
             </tr>
           </tbody>
@@ -153,47 +160,51 @@ await useAsyncData('personas', async () => {
 
     <!-- Create/Edit Persona Dialog -->
     <VDialog v-model="dialogVisible" max-width="600px">
-      <VCard>
-        <VCardTitle class="text-h4 font-weight-bold mb-4 ma-2">
-          {{ isEditing ? 'Edit Persona' : 'Create New Persona' }}
-        </VCardTitle>
-        <VCardText>
-          <VTextField class="mb-4" label="Name" v-model="formPersona.name" outlined />
-          <VSwitch class="mb-4" label="For Paying Users" v-model="formPersona.forPayingUsers" />
-          <VRow>
-            <VCol cols="6">
-              <VTextField label="Min Level" type="number" v-model.number="formPersona.minLevel" />
-            </VCol>
-            <VCol cols="6">
-              <VTextField label="Max Level" type="number" v-model.number="formPersona.maxLevel" />
-            </VCol>
-          </VRow>
-          <VRow>
-            <VCol cols="6">
-              <VTextField label="Min MMR" type="number" v-model.number="formPersona.minMmr" />
-            </VCol>
-            <VCol cols="6">
-              <VTextField label="Max MMR" type="number" v-model.number="formPersona.maxMmr" />
-            </VCol>
-          </VRow>
-          <VRow>
-            <VCol cols="6">
-              <VTextField label="Min Deposits" type="number" v-model.number="formPersona.minDeposits" />
-            </VCol>
-            <VCol cols="6">
-              <VTextField label="Max Deposits" type="number" v-model.number="formPersona.maxDeposits" />
-            </VCol>
-          </VRow>
-        </VCardText>
-        <VCardActions>
-          <VSpacer />
-          <VBtn @click="dialogVisible = false">Cancel</VBtn>
-          <VBtn style="background-color: #8C57FF;" color="white" @click="submitForm">
-            {{ isEditing ? 'Update' : 'Save' }}
-          </VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
+  <VCard>
+    <VCardTitle class="text-h5 font-weight-bold mb-2 ma-2">
+      {{ isEditing ? 'Edit Persona' : 'Create New Persona' }}
+    </VCardTitle>
+    <VCardText>
+      <VTextField label="Name" v-model="formPersona.name" outlined dense />
+      <VSwitch label="For Paying Users"
+  v-model="formPersona.forPayingUsers"
+  :color="formPersona.forPayingUsers ? 'black' : undefined"
+  dense />
+      <VRow dense>
+        <VCol cols="6" class="pa-1">
+          <VTextField label="Min Level" type="number" v-model.number="formPersona.minLevel" outlined dense />
+        </VCol>
+        <VCol cols="6" class="pa-1">
+          <VTextField label="Max Level" type="number" v-model.number="formPersona.maxLevel" outlined dense />
+        </VCol>
+      </VRow>
+      <VRow dense>
+        <VCol cols="6" class="pa-1">
+          <VTextField label="Min MMR" type="number" v-model.number="formPersona.minMmr" outlined dense />
+        </VCol>
+        <VCol cols="6" class="pa-1">
+          <VTextField label="Max MMR" type="number" v-model.number="formPersona.maxMmr" outlined dense />
+        </VCol>
+      </VRow>
+      <VRow dense>
+        <VCol cols="6" class="pa-1">
+          <VTextField label="Min Deposits" type="number" v-model.number="formPersona.minDeposits" outlined dense />
+        </VCol>
+        <VCol cols="6" class="pa-1">
+          <VTextField label="Max Deposits" type="number" v-model.number="formPersona.maxDeposits" outlined dense />
+        </VCol>
+      </VRow>
+    </VCardText>
+    <VCardActions>
+      <VSpacer />
+      <VBtn style="letter-spacing: normal" variant="flat" color="white" @click="dialogVisible = false">Cancel</VBtn>
+      <VBtn style="letter-spacing: normal" color="white" @click="submitForm">
+        {{ isEditing ? 'Update' : 'Save' }}
+      </VBtn>
+    </VCardActions>
+  </VCard>
+</VDialog>
+
 
     <v-snackbar
       v-model="snackbar.show"

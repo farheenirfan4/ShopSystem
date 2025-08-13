@@ -53,7 +53,7 @@ const menuItems = [
   { title: 'Set Personas', to: '/persona', icon: 'mdi-account-group' },
   { title: 'Display Configs', to: '/displayConfigs', icon: 'mdi-monitor-screenshot' },
   { title: 'Players Data', to: '/admin', icon: 'mdi-list-box' },
-  { title: 'Settings', to: '/settings', icon: 'mdi-cog' },
+  //{ title: 'Settings', to: '/settings', icon: 'mdi-cog' },
   { title: 'Log out', to: '/signin', icon: 'mdi-login-variant' },
 
 ]

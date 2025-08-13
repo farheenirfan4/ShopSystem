@@ -116,13 +116,15 @@ onMounted(async () => {
   <VContainer class="mt-8">
     <VCard>
       <VCardTitle class="d-flex justify-space-between align-center mb-4 ms-2">
-        <span class="text-h4 font-weight-bold">Display Configuration</span>
+        <span class="text-h5 font-weight-bold">Display Configuration</span>
         <VBtn
-          icon="mdi-plus"
-          color="primary"
-          class="square-btn"
-          @click="openCreateDialog"
-        />
+  color="black"
+  style="letter-spacing: normal; padding: 8px 20px; min-width: 140px; font-weight: 500;"
+  class="ms-2 mb-2"
+  @click="openCreateDialog"
+>
+  Add Display Config
+</VBtn>
       </VCardTitle>
 
       <VCardText>
@@ -153,7 +155,7 @@ onMounted(async () => {
               <td>{{ item.priority }}</td>
               <td>{{ new Date(item.createdAt).toLocaleString() }}</td>
               <td>
-                <VBtn small icon="mdi-pencil" variant="flat" color="purple" @click="openEditDialog(item)" />
+                <VBtn icon="mdi-pencil" size="small" color="white" variant="flat" @click="openEditDialog(item)" />
               </td>
             </tr>
           </tbody>
@@ -164,7 +166,7 @@ onMounted(async () => {
     <!-- Create/Edit Dialog -->
     <VDialog v-model="dialogVisible" max-width="600px">
       <VCard>
-        <VCardTitle class="text-h4 font-weight-bold mb-4 ma-2">
+        <VCardTitle class="text-h5 font-weight-bold mb-2 ma-2">
           {{ isEditing ? 'Edit Display Config' : 'Create New Display Config' }}
         </VCardTitle>
         <VCardText>
@@ -183,7 +185,7 @@ onMounted(async () => {
 
         <VCardActions>
           <VSpacer />
-          <VBtn @click="dialogVisible = false">Cancel</VBtn>
+          <VBtn style="letter-spacing: normal" variant="flat" color="white" @click="dialogVisible = false">Cancel</VBtn>
           <VBtn style="background-color: #8C57FF;" color="white" @click="submitForm">
             {{ isEditing ? 'Update' : 'Save' }}
           </VBtn>
@@ -201,7 +203,7 @@ onMounted(async () => {
     >
       {{ snackbar.message }}
       <template #actions>
-        <VBtn color="white" @click="snackbar.show = false">Close</VBtn>
+        <VBtn style="letter-spacing: normal" variant="flat" color="white"  icon="mdi-window-close" @click="snackbar.show = false"></VBtn>
       </template>
     </VSnackbar>
   </VContainer>
