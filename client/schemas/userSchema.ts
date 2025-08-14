@@ -68,11 +68,10 @@ export const userSchema = {
       }
     }
   },
-  required: ["id", "email", "roles", "username", "password"],
+  required: [ "email", "roles", "username"],
   additionalProperties: false,
   errorMessage: {
     required: {
-      id: "ID is required",
       email: "Email is required",
       roles: "Roles are required",
       username: "Username is required"

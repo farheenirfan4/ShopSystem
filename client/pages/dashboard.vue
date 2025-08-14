@@ -2,7 +2,7 @@
   <v-container fluid class="pa-6">
     <v-row>
       <v-col cols="12" md="9">
-        <userTable />
+        <userTable v-if="isAdmin" />
       </v-col>
 
       <v-col cols="12" md="3">
@@ -36,7 +36,14 @@
 </template>
 
 <script setup lang="ts">
+
+import { useAuth } from '~/composables/Authentication/useAuth'
 import userTable from '~/components/userTable.vue';
+
+const { user } = useAuth()
+
+// Computed property to check if the user is an admin
+const isAdmin = computed(() => user.value?.roles?.includes('admin'))
 </script>
 
 <style scoped>

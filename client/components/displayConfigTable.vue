@@ -30,7 +30,7 @@ const formDisplayConfig = ref<Omit<DisplayConfig, 'id' | 'createdAt' | 'updatedA
   displaySection: '',
   height: '',
   width: '',
-  priority: ''
+  priority: 0
 })
 
 // Open new config dialog
@@ -60,13 +60,31 @@ const resetForm = () => {
     displaySection: '',
     height: '',
     width: '',
-    priority: ''
+    priority: 0
   }
 }
 
 // Handle submit
 const submitForm = async () => {
+
+  formDisplayConfig.value.priority = Number(formDisplayConfig.value.priority)
   const { valid, errors } = validateDisplayConfigureForm(formDisplayConfig.value)
+  
+
+  const isDuplicatePriority = displayConfigs.value.some(config => {
+  
+    return config.priority === formDisplayConfig.value.priority && config.id !== editingId.value;
+  });
+
+  if (isDuplicatePriority) {
+    snackbar.value = {
+      show: true,
+      message: 'Priority value must be unique.',
+      color: 'error',
+      timeout: 3000
+    };
+    return;
+  }
 
   if (!valid) {
     const message = errors
@@ -88,6 +106,8 @@ const submitForm = async () => {
   }
 
   let config: DisplayConfig | null = null
+
+  
 
   if (isEditing.value && editingId.value !== null) {
     config = await updateDisplayConfig(editingId.value, formDisplayConfig.value)
@@ -153,7 +173,7 @@ onMounted(async () => {
               <td>{{ item.height }}</td>
               <td>{{ item.width }}</td>
               <td>{{ item.priority }}</td>
-              <td>{{ new Date(item.createdAt).toLocaleString() }}</td>
+              <td>{{ new Date(item.created_at).toLocaleString() }}</td>
               <td>
                 <VBtn icon="mdi-pencil" size="small" color="white" variant="flat" @click="openEditDialog(item)" />
               </td>
@@ -174,12 +194,7 @@ onMounted(async () => {
             <VTextField label="Display Section" v-model="formDisplayConfig.displaySection" outlined />
             <VTextField label="Height" v-model="formDisplayConfig.height" outlined />
             <VTextField label="Width" v-model="formDisplayConfig.width" outlined />
-            <VSelect
-              label="Priority"
-              v-model="formDisplayConfig.priority"
-              :items="['High', 'Moderate', 'Low']"
-              outlined
-            />
+            <VTextField label="Priority" v-model="formDisplayConfig.priority" outlined type="number" />
           </div>
         </VCardText>
 

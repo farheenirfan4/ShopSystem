@@ -4,7 +4,7 @@
       <v-card-title class="d-flex align-center">
   <span class="text-h5 font-weight-bold">Offers List</span>
   <v-spacer />
-  <v-btn color="primary" style="letter-spacing: normal" @click="openAddDialog">
+  <v-btn color="primary" style="letter-spacing: normal" v-if="!isViewer" @click="openAddDialog">
     Add Offer
   </v-btn>
   <!-- <v-btn color="primary" @click="fetchOffers">
@@ -67,7 +67,7 @@
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <div style="display: flex; gap: 0px;">
+          <div style="display: flex; gap: 0px;" v-if="!isViewer">
   <VBtn
     icon="mdi-pencil"
     size="small"
@@ -79,7 +79,7 @@
     size="small"
     icon="mdi-delete-outline"
     color="red"
-    @click="deleteOffer(item.id)"
+    @click="handleDeleteOffer(item.id)"
   />
 </div>
         </template>
@@ -270,12 +270,13 @@ import { usePersonaService } from '~/composables/Persona/usePersonaService';
 import { getOfferStatus, toUTCISOString, formatForDateTimeLocal, stringifyProductName, parseProductName } from '../utils/offerUtils';
 import { useDisplayConfigService } from '~/composables/DisplayConfigure/useDisplayConfig';
 import { fetchFilteredUsers, users as filteredUsers } from '../composables/PlayerData/usePlayerServices';
-
+import { useOfferValidator } from '~/composables/validators/useOfferValidator';
 // Define composables
 const { fetchDisplayConfig, getDisplayConfigIds } = useDisplayConfigService();
 const { getPersonaIds, fetchPersonasConfig } = usePersonaService();
 const { user } = useAuth();
 const { offers, loading, fetchOffers, addOffer, updateOffer, deleteOffer } = useOffers();
+
 
 // State management
 const newOffer = ref<Partial<Offer>>({
@@ -300,6 +301,7 @@ const displayConfigIds = ref<number[]>([]);
 const isUserDialogOpen = ref(false);
 const selectedPersonaId = ref<number | null>(null);
 const userDialogLoading = ref(false);
+//const snackbar = ref({ show: false, text: '', color: 'error' })
 
 const snackbar = ref({
   show: false,
@@ -309,8 +311,8 @@ const snackbar = ref({
 });
 
 const headers = [
-  { title: "Title", key: "title" },
-  { title: "Description", key: "description" },
+  { title: "Title", key: "title" , sortable: false},
+  { title: "Description", key: "description", sortable: false },
   { title: "Price", key: "price" },
   { title: "Discount (%)", key: "discountPercentage" },
   { title: "Tags", key: "promotionalTags" },
@@ -322,6 +324,8 @@ const headers = [
   { title: "Start Date", key: "startDateUTC" },
   { title: "End Date", key: "endDateUTC" },
   { title: "Is Active", key: "status" },
+  //{ title: 'Cash Deposit', key: 'CashDeposit', sortable: false },
+  
   { title: "Actions", key: "actions", sortable: false },
 ];
 
@@ -417,11 +421,42 @@ function editOffer(item: Offer & { _id?: string }) {
   isAddDialogOpen.value = true;
 }
 
+function showSnackbar(message: string) {
+  snackbar.value = { show: true, text: message, color: 'error', timeout: 3000 };
+}
+
 // API interactions
 async function saveOffer() {
+
+
+
   try {
     if (newOffer.value.repeatPatterns === 'none') {
       newOffer.value.repeatDetails = [];
+    }
+
+    const titleExists = offers.value.some(
+      o => o.title.toLowerCase() === (newOffer.value.title || '').toLowerCase() && (!editModel.value || o.id !== editingOfferId.value)
+    );
+
+    if (titleExists) {
+      snackbar.value = { show: true, text: 'Offer title already exists.', color: 'red', timeout: 3000 };
+      return;
+    }
+
+    if (newOffer.value.startDateUTC && newOffer.value.endDateUTC) {
+      const startDate = new Date(newOffer.value.startDateUTC);
+      const endDate = new Date(newOffer.value.endDateUTC);
+
+      if (endDate < startDate) {
+        snackbar.value = {
+          show: true,
+          text: 'End Date cannot be before Start Date.',
+          color: 'red',
+          timeout: 3000
+        };
+        return; // Stop the function from proceeding
+      }
     }
 
     const offerToSave = {
@@ -438,12 +473,14 @@ async function saveOffer() {
       product: stringifyProductName(newOffer.value.product as string)
     };
 
+
     if (editModel.value && editingOfferId.value) {
       const dataToUpdate = { ...offerToSave };
       delete (dataToUpdate as any).status;
       await updateOffer(editingOfferId.value, dataToUpdate as Offer);
       snackbar.value = { show: true, text: 'Offer updated successfully!', color: 'green', timeout: 3000 };
     } else {
+
       await addOffer(offerToSave as Offer);
       snackbar.value = { show: true, text: 'Offer added successfully!', color: 'green', timeout: 3000 };
     }
@@ -454,11 +491,45 @@ async function saveOffer() {
 
   } catch (err: any) {
     console.error("Failed to save offer:", err);
-    snackbar.value = { show: true, text: `Failed to save offer: ${err.message}`, color: 'red', timeout: 5000 };
+
+   const errors = err.response?.data?.errors || err.response?.data || []
+  
+  // Flatten messages
+  const messages = errors.map((e: any) => `${e.instancePath.replace('/', '')}: ${e.message}`)
+  
+  // Show in a snackbar or alert
+  snackbar.value = { show: true, text: messages.join(', ') || 'Data not valid', color: 'red', timeout: 3000 }
   } finally {
     await fetchOffers();
   }
 }
+
+async function handleDeleteOffer(id: string) {
+  try {
+    await deleteOffer(id);          // call your composable's delete function
+    await fetchOffers();            // refresh the offers list
+    snackbar.value = {
+      show: true,
+      text: 'Offer deleted successfully!',
+      color: 'green',
+      timeout: 3000,
+    };
+  } catch (err: any) {
+    snackbar.value = {
+      show: true,
+      text: `Failed to delete offer: ${err.message}`,
+      color: 'red',
+      timeout: 5000,
+    };
+  }
+}
+
+
+// Computed property to check if the user has the "admin" role
+const isViewer = computed(() => {
+  return user.value?.roles?.includes('viewer');
+})
+
 
 // Lifecycle hooks
 onMounted(async () => {

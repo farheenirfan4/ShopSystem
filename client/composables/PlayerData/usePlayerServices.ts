@@ -2,10 +2,12 @@ import { onMounted } from 'vue';
 import { usePersonaService } from '../../composables/Persona/usePersonaService';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../../composables/Authentication/useAuth';
+import type { Player, SortItem } from '../../types/players'
 
 
 
 const { user, token } = useAuth() 
+const loading = ref(true)
 // The base URL for your API endpoint
 const API_URL = 'http://localhost:3030/players-data'; // Replace with your actual API endpoint
 
@@ -24,6 +26,8 @@ const {
 export const users = ref([]);
 export const isLoading = ref(false);
 export const error = ref<string | null>(null);
+const players = ref<Player[]>([])
+const total = ref(0)
 
 export const fetchFilteredUsers = async (personaId: number) => {
   await fetchPersonasConfig();
@@ -80,3 +84,30 @@ export const fetchFilteredUsers = async (personaId: number) => {
     console.error('Failed to fetch filtered users:', error);
   }
 };
+
+export const fetchData = async () => {
+
+  loading.value = true
+      try {
+        let url = 'http://localhost:3030/players-data?$includeCashDeposit=true'
+        const response = await fetch(url, {
+          headers: {
+        'Authorization': `Bearer ${token.value}` // Use the passed token
+      }
+
+        })
+        const data = await response.json();
+        players.value = data.data ?? []
+        console.log('Players data with deposited cash: ', data)
+        //total.value = Array.isArray(response) ? response.length : response.total
+        
+  
+       
+      } catch (e) {
+        console.error('Failed to fetch users:', e)
+      } finally {
+        loading.value = false
+      }
+}
+
+

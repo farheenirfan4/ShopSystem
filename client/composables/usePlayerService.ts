@@ -25,11 +25,9 @@ export function usePlayerService() {
   const fetchData = async () => {
    loading.value = true
     try {
-      let url = 'http://localhost:3030/players-data?$limit=12078'
+      let url = 'http://localhost:3030/players-data?$includeCashDeposit=true'
 
-     /*if (searchUsername.value) {
-       url += `&username[$iLike]=%25${searchUsername.value}%25`
-      }*/
+    
       
       const res: { total: number; data: Player[] } | Player[] = await useAuthFetch(url)
       users.value = (Array.isArray(res) ? res : res.data).map(user => ({
@@ -110,92 +108,7 @@ async function sort(newSort: SortItem[]) {
 }
 
 
-let minLevel = ref(0)
-let maxLevel = ref(90)
-let isPaying = ref(false)
 
-
-const fetchFilteredDataForOffer = async () => {
-  loading.value = true
-  await fetchDataWithConfig(1);
-  console.log(`The value of maxLevel after calling fetchDataWithConfig is ${maxLevel.value} and isBotFilter is ${isPaying.value}`)
-  try {
-    let url = 'http://localhost:3030/players-data?$limit=12078'
-
-    if (minLevel.value !== null && maxLevel.value !== null) {
-      url = url + `&$levelRange[min]=${minLevel.value}&$levelRange[max]=${maxLevel.value}` + 
-      `&$isPaying=${isPaying.value}`;
-    }
-    const res: { total: number; data: Player[] } | Player[] = await useAuthFetch(url)
-    users.value = (Array.isArray(res) ? res : res.data).map(user => ({
-      ...user,
-      metadata: {
-        ...user.metadata,
-        IsBotUser: String(user.metadata?.IsBotUser ?? '')
-      }
-    }))
-    total.value = Array.isArray(res) ? res.length : res.total
-    console.log('I am fetching filterd data');
-    console.log('Filtered users:', users.value);
-    console.log(url)
-
-  } catch (e) {
-    console.error('Failed to fetch users:', e)
-  } finally {
-    loading.value = false
-  }
-}
-
-const fetchDataWithConfig = async (personaConfigId: Number) => {
-   
-    try {
-      // 1. Fetch the configuration data
-      const configUrl = `http://localhost:3030/personas-config/${personaConfigId}`;
-      const configRes: PersonaConfig = await useAuthFetch(configUrl);
-      
-      // 2. Extract values and update reactive variables
-      // Assuming the config object has properties like minLevel, maxLevel, and isPayingUser
-      if (configRes) {
-        minLevel.value = configRes.minLevel || 0;
-        maxLevel.value = configRes.maxLevel || 90;
-        isPaying.value = configRes.isPayingUser || false;
-      }
-
-      console.log(`The value from persona-config response is ${configRes.maxLevel}` )
-
-    } catch (e) {
-      console.error('Failed to fetch data with config:', e);
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  interface CountResponse {
-  count: number;
-}
-
-  const fetchCount = async () => {
-  loading.value = true;
-  await fetchDataWithConfig(3); // Ensure config is fetched first
-
-  try {
-    let url = 'http://localhost:3030/players-data?$count=1';
-    url += `&$levelRange[min]=${minLevel.value}&$levelRange[max]=${maxLevel.value}`;
-    url += `&$isPaying=${isPaying.value}`;
-
-    const res:CountResponse = await useAuthFetch(url);
-
-    if (res && res.count !== undefined) {
-      console.log(`The number of users is: ${res.count}`);
-      total.value = res.count; // Assuming 'total' is your reactive variable for count
-    }
-
-  } catch (e) {
-    console.error('Failed to fetch user count:', e);
-  } finally {
-    loading.value = false;
-  }
-};
 
   return {
     users,
@@ -210,7 +123,5 @@ const fetchDataWithConfig = async (personaConfigId: Number) => {
     filteredUsers,
     debouncedFetchData,
     sort,
-    fetchFilteredDataForOffer,
-    fetchCount
   }
 }

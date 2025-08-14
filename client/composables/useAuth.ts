@@ -9,7 +9,7 @@ type AuthUser = {
 
 const user = ref<AuthUser | null>(null)
 
-// Eagerly load from localStorage
+
 if (process.client && !user.value) {
   const storedUser = localStorage.getItem('user')
   if (storedUser) {

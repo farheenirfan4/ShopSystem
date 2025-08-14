@@ -41,11 +41,16 @@ export function getOfferStatus(offer: Offer, now: Date = new Date()): OfferStatu
   const campaignStart = new Date(offer.startDateUTC); // includes time
   const campaignEnd = new Date(offer.endDateUTC);     // includes time
 
-  // Check full date-time first
+
+  //console.log('Campaign Start:', campaignStart);
+  //console.log('Campaign End:', campaignEnd);
+  //console.log('Current Time:', now);
+
+  
   if (now < campaignStart) return 'upcoming';
   if (now > campaignEnd) return 'expired';
 
-  // No repeat or daily repeat
+  
   if (offer.repeatPatterns === 'none' || offer.repeatPatterns === 'daily') {
     // Check if current time is within the campaign start/end hours
     const startTime = campaignStart.getTime();

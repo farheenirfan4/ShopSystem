@@ -30,6 +30,7 @@ interface User {
   email: string
   roles: string[]
   username: string
+  password?: string 
 }
 
 const headers = [
@@ -52,12 +53,13 @@ const isEditDialogOpen = ref(false)
 
 // New & Edit form state
 const newUser = ref({ username: '', email: '', password: '', roles: [] as string[] })
-const editUser = ref<User>({ id: '', email: '', roles: [], username: '' })
+const editUser = ref<User>({ id: '', email: '', roles: [], username: '', password: '' })
 
 // Handlers
 const handleAddUser = async () => {
+
   const { valid, errors } = validateUserForm({
-    id: '',
+    //id: editUser.value.id,
     username: newUser.value.username,
     email: newUser.value.email,
     roles: newUser.value.roles
@@ -67,12 +69,36 @@ const handleAddUser = async () => {
     showMessage(errors.map(e => e.message).join(', '))
     return
   }
+  
 
   if (!newUser.value.username || !newUser.value.email || !newUser.value.password) {
     return showMessage('Please fill all required fields.')
   }
 
+  const usernameExists = userData.value.some(u => u.username.toLowerCase() === newUser.value.username.toLowerCase())
+  if (usernameExists) {
+    return showMessage('Username already exists.')
+  }
+
+  const emailExists = userData.value.some(u => u.email.toLowerCase() === newUser.value.email.toLowerCase())
+  if (emailExists) {
+    return showMessage('Email already exists.')
+  }
+
+  try {
   await createUser(newUser.value)
+  showMessage('User created successfully!', 'success')
+} catch (err: any) {
+  console.error("Failed to create user:", err)
+
+  // Extract backend message if it exists
+  const message = err?.response?.data?.message || err?.message || 'Failed to create user.'
+  showMessage(message)
+} finally {
+  isAddDialogOpen.value = false
+}
+
+  
 
   isAddDialogOpen.value = false
   newUser.value = { username: '', email: '', password: '', roles: [] }
@@ -84,8 +110,8 @@ const openEditDialog = (user: User) => {
 }
 
 const handleUpdateUser = async () => {
+
   const { valid, errors } = validateUserForm({
-    id: editUser.value.id,
     username: editUser.value.username,
     email: editUser.value.email,
     roles: editUser.value.roles
@@ -145,6 +171,19 @@ onMounted(async () => {
           <VImg v-if="item.avatar" :src="item.avatar" />
         </VAvatar>
       </template>
+      <template #item.roles="{ item }">
+    <div class="d-flex flex-wrap gap-2">
+      <v-chip
+        v-for="role in item.roles"
+        :key="role"
+        size="small"
+        color="secondary"
+        variant="flat"
+      >
+        {{ role }}
+      </v-chip>
+    </div>
+  </template>
 
       <!-- Actions -->
       <template #item.actions="{ item }">
@@ -179,7 +218,7 @@ onMounted(async () => {
         <VTextField v-model="newUser.password" label="Password" type="password" required />
         <VSelect
           v-model="newUser.roles"
-          :items="['admin', 'editor', 'viewer']"
+          :items="['admin', 'moderator', 'viewer']"
           label="Role"
           multiple
         />
@@ -208,16 +247,16 @@ onMounted(async () => {
     <!-- Edit User Dialog -->
     <VDialog v-model="isEditDialogOpen" max-width="500px">
       <VCard>
-        <VCardTitle class="text-h4 font-weight-bold mb-2 ma-2">Edit User</VCardTitle>
+        <VCardTitle class="text-h5 font-weight-bold mb-2 ma-2">Edit User</VCardTitle>
         <VCardText>
           <div class="d-flex flex-column gap-4">
             <VTextField v-model="editUser.username" label="Username" required />
             <VTextField v-model="editUser.email" label="Email" required />
-            <VSelect v-model="editUser.roles" :items="['admin', 'editor', 'viewer']" label="Role" multiple />
+            <VSelect v-model="editUser.roles" :items="['admin', 'moderator', 'viewer']" label="Role" multiple />
           </div>
         </VCardText>
-        <VCardActions>
-          <VBtn @click="isEditDialogOpen = false">Cancel</VBtn>
+        <VCardActions style="justify-content: flex-end; gap: 4px;" >
+          <VBtn style="letter-spacing: normal" @click="isEditDialogOpen = false" variant="flat" color="white">Cancel</VBtn>
           <VBtn style="letter-spacing: normal" color="white" @click="handleUpdateUser">Update</VBtn>
         </VCardActions>
       </VCard>

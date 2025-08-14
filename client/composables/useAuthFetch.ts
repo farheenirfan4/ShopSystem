@@ -4,7 +4,7 @@ export const useAuthFetch = async <T = unknown>(
   url: string,
   options: NitroFetchOptions<string> = {}
 ): Promise<T> => {
-  const token = localStorage.getItem('accessToken')
+  const token = localStorage.getItem('feathers-jwt')
 
   return await $fetch<T>(url, {
     ...options,

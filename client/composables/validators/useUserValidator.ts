@@ -19,10 +19,11 @@ const validateUser = ajv.compile(userSchema);
 
 export function useUserValidator() {
   function validateUserForm(data: {
-    id: string;
+    id?: string;
     email: string;
     roles: string[];
     username: string;
+    password?: string;
   }) {
     const valid = validateUser(data);
     return {

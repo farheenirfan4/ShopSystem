@@ -206,6 +206,7 @@ const headers = [
   { title : 'Create Time', value: 'create_time'},
   { title : 'Wallet Cash', value: 'wallet.Cash', sortable: true},
   { title : 'Wallet Coin', value: 'wallet.Coins' , sortable:true},
+  { title: 'Cash Deposit', value: 'deposit_amount', sortable: true},
   { title: 'Actions', value: 'actions', sortable: false }
 ]
 

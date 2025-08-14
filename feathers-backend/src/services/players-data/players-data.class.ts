@@ -8,6 +8,7 @@ import type { Application } from '../../declarations'
 import { primaryDb } from '../../db/primary'
 
 import type { PlayersData, PlayersDataData, PlayersDataPatch, PlayersDataQuery } from './players-data.schema'
+import { join } from 'path'
 
 export type { PlayersData, PlayersDataData, PlayersDataPatch, PlayersDataQuery }
 
@@ -48,17 +49,41 @@ async find(
         count: String(row.count)
       }))
 
-    //return results
+   
   }
-   let knexQuery = knex('users').select('id','username');
 
-   if (query?.$levelRange50to100) { // 👈 Check for the new parameter
+
+   let knexQuery = knex('users as u')
+  .select('u.username', 'u.id');
+  
+
+if (query?.$includeCashDeposit) {
+
+  knexQuery = knex('storage as p')
+  .join('users as u', 'p.user_id', 'u.id')
+  .select(
+    knex.raw(`p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit' AS deposit_amount`),
+    'u.*'
+  )
+  .where('p.collection', 'UserState')
+  .andWhere('p.key', 'UserStats')
+  .andWhereRaw(
+    `(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit')::numeric > 0`
+  );
+  
+}
+
+
+
+   if (query?.$levelRange50to100) { 
     knexQuery = knexQuery
       .whereRaw(`(metadata->'CareerProgressData'->>'Level')::INT > ?`, [50])
       .andWhereRaw(`(metadata->'CareerProgressData'->>'Level')::INT < ?`, [100]);
-    // Important: Remove this custom parameter from the query so it doesn't interfere with other filters
+    
     delete query.$levelRange50to100;
   }
+
+  
 
   if (query?.$isPaying !== undefined) {
     const isPayingUserValue = query.$isPaying;
@@ -76,15 +101,14 @@ if (query?.$levelRange) {
     delete query.$levelRange;
 }
 
-// Now, handle the conditions that require joining the 'storage' table.
-// If any of these conditions exist, we'll perform the join.
+
 if (query?.$totalDeposit || query?.$Mmr) {
-    // Perform the join only once if needed
+    
     knexQuery = knexQuery
         .from('storage as p')
         .join('users as u', 'p.user_id', 'u.id');
     
-    // Now apply the where conditions from the original 'totalDeposit' block
+    
     if (query?.$totalDeposit) {
         const { min, max } = query.$totalDeposit;
         knexQuery = knexQuery
@@ -101,7 +125,7 @@ if (query?.$totalDeposit || query?.$Mmr) {
         delete query.$totalDeposit;
     }
 
-    // Now apply the where conditions from the original 'Mmr' block
+    
     if (query?.$Mmr) {
         const { min, max } = query.$Mmr;
         knexQuery = knexQuery
@@ -145,9 +169,6 @@ if (query?.$totalDeposit || query?.$Mmr) {
   if ($limit !== undefined) knexQuery.limit($limit)
   if ($skip !== undefined) knexQuery.offset($skip)
 
-  // You may optionally apply additional filters using where clauses here if needed
-
-  // Run query and paginate manually
   const data = await knexQuery
   const total = await knex('users').count('* as count').first()
 
@@ -169,3 +190,4 @@ export const getOptions = (app: Application): KnexAdapterOptions => {
     name: 'users'
   }
 }
+

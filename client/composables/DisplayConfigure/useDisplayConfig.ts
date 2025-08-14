@@ -9,7 +9,7 @@ export interface DisplayConfig {
   displaySection: string,
   height: string,
   width: string,
-  priority: string
+  priority: number
 }
 
 export const useDisplayConfigService = () => {

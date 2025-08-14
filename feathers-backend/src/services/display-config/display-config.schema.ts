@@ -16,7 +16,7 @@ export const displayConfigSchema = {
     displaySection: { type: 'string' },        // e.g. 'personasConfig'
     height: { type: 'string' },
     width: { type: 'string' },        // create, patch, remove
-    priority: {type: 'string'}
+    priority: {type: 'number'}
   }
 } as const
 export type DisplayConfig = FromSchema<typeof displayConfigSchema>

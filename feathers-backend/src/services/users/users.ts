@@ -93,10 +93,10 @@ export const user = (app: Application) => {
       ]
     },
     after: {
-      create: [changelogHook],
-      patch: [changelogHook],
-      update: [changelogHook],
-      remove: [changelogHook],
+      //create: [changelogHook],
+      //patch: [changelogHook],
+      //update: [changelogHook],
+      //remove: [changelogHook],
       all: []
     },
     error: {

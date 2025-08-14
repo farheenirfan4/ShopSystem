@@ -25,6 +25,7 @@
           exact
           active-class="active-link"
           class="nav-link"
+          @click="handleMenuClick(item)"
         >
           <v-list-item-content class="d-flex align-center">
             <v-icon class="mr-2">{{ item.icon }}</v-icon>
@@ -43,9 +44,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useDisplay } from 'vuetify'
+import { useAuth } from '~/composables/Authentication/useAuth'
+import { useRouter } from 'vue-router'
 
 const drawer = ref(true)
 const { mdAndUp } = useDisplay()
+const { logout } = useAuth()
+const router = useRouter()
 
 const menuItems = [
   { title: 'Dashboard', to: '/dashboard', icon: 'mdi-view-dashboard' },
@@ -53,10 +58,21 @@ const menuItems = [
   { title: 'Set Personas', to: '/persona', icon: 'mdi-account-group' },
   { title: 'Display Configs', to: '/displayConfigs', icon: 'mdi-monitor-screenshot' },
   { title: 'Players Data', to: '/admin', icon: 'mdi-list-box' },
+  { title: 'Visualize data', to: '/visualizedata', icon: 'mdi-chart-bar' },
   //{ title: 'Settings', to: '/settings', icon: 'mdi-cog' },
-  { title: 'Log out', to: '/signin', icon: 'mdi-login-variant' },
+  { title: 'Log out', to: '/signin', icon: 'mdi-login-variant',action: 'logout' },
 
 ]
+
+// Handle menu item click
+const handleMenuClick = async (item: typeof menuItems[number]) => {
+  if (item.action === 'logout') {
+    logout()          // Call the logout function
+    await router.push('/signin')  // Navigate to signin
+  } else {
+    await router.push(item.to)
+  }
+}
 
 // Dynamically compute the margin for the main content
 const mainContentStyle = computed(() => {

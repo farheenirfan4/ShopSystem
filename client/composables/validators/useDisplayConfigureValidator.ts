@@ -18,7 +18,7 @@ export function useDisplayConfigureValidator() {
     displaySection: string;
     height: string;
     width: string;
-    priority: string;
+    priority: number;
   }) {
     const valid = validateDisplayConfigure(data);
     return {

@@ -85,6 +85,7 @@ export const playersDataQuerySchema = {
     'metadata.EarningData.CashEarned': { type: 'number' },
     'metadata.CareerProgressData.Level': { type: 'number' },
     'metadata.IsBotUser': { type: 'boolean' },
+    $includeCashDeposit: Type.Optional(Type.Boolean()),
     $aggregateByDate: Type.Optional(Type.Boolean()),
     $levelRange50to100: Type.Optional(Type.Boolean()),
     $levelRange: Type.Optional(Type.Object({

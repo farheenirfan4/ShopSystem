@@ -31,6 +31,12 @@ export function useOfferValidator() {
     repeatDetails: string[];
     startDateUTC: string;
     endDateUTC: string;
+    createdBy?: string;
+    updatedBy?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    isActive?: boolean;
+    isDeleted?: boolean;
   }) {
     const valid = validateOffer(data);
     return {
