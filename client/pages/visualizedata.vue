@@ -72,7 +72,7 @@ const chartOptions = ref<ChartOptions<'bar'>>({
 onMounted(async () => {
   try {
     const res = await $fetch<AggregatedResult>('/api/players-data', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem('feathers-jwt')}` },
       params: {
         $aggregateByDate: true
       }
