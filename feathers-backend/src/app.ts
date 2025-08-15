@@ -46,7 +46,7 @@ const corsOptions = {
   credentials: true,
   optionSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Best practice to include all methods
-  allowedHeaders: ['Content-Type', 'Authorization'] // Also best practice
+  allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'] // Also best practice
 };
 
 const app: Application = express(feathers())
