@@ -23,15 +23,30 @@ import { channels } from './channels'
 import { registerChangeLogListener } from './listeners/changeLogs.listener';
 import { changeLogs } from './services/changelogs/changelogs'
 //import cors from 'cors';
-const app: Application = express(feathers())
 
-const allowedOrigin = 'https://shop-system-hafg.vercel.app'
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  'https://shop-system-hafg.vercel.app'
+]
+
 const corsOptions = {
-  origin: allowedOrigin,
+  origin: (origin: string | undefined, callback: any) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    } else {
+      return callback(new Error('Not allowed by CORS'))
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }
+const app: Application = express(feathers())
+
+const allowedOrigin = 'https://shop-system-hafg.vercel.app'
+
 
 // Load app configuration
 app.use(cors(corsOptions))
