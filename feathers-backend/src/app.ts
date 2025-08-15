@@ -52,7 +52,7 @@ app.configure(channels)
 app.use(notFound())
 app.use(errorHandler({ logger }))
 app.use(cors({
-  origin: ['https://shop-system-hafg.vercel.app/'], // your frontend domain
+  origin: ['https://shop-system-hafg.vercel.app'], // your frontend domain
   credentials: true
 }));
 
