@@ -28,11 +28,26 @@ const allowedOrigins = [
   'https://shop-system-hafg.vercel.app'
 ]
 
+// Corrected CORS options
 const corsOptions = {
-  origin: '*',
+  // Use a function to dynamically check if the origin is allowed
+  origin: (origin: string | undefined, callback: any) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+
+    // Check if the incoming origin is in our allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+  },
   credentials: true,
-  optionSuccessStatus:200,
-}
+  optionSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Best practice to include all methods
+  allowedHeaders: ['Content-Type', 'Authorization'] // Also best practice
+};
 
 const app: Application = express(feathers())
 
@@ -40,7 +55,7 @@ const app: Application = express(feathers())
 app.configure(configuration(configurationValidator))
 
 // IMPORTANT: Configure CORS here at the top, using your custom options.
-app.use(cors(corsOptions)) // <-- THIS IS THE CORRECT WAY
+app.use(cors(corsOptions))
 
 app.use(json())
 app.use(urlencoded({ extended: true }))
@@ -51,8 +66,13 @@ app.use('/', serveStatic(app.get('public')))
 // Configure services and real-time functionality
 app.configure(rest())
 app.configure(
-  socketio()
-)
+  socketio({
+    cors: {
+      origin: allowedOrigins,
+      credentials: true
+    }
+  })
+);
 app.configure(postgresql)
 app.configure(authentication)
 app.configure(services)
