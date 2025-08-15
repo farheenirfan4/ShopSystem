@@ -1,85 +1,68 @@
-<!-- pages/cors-debug.vue -->
 <template>
-  <v-container class="mt-8">
-    <v-card>
-      <v-card-title>CORS Debug Tool</v-card-title>
-      <v-card-text>
-        <v-btn color="primary" @click="runTests" :loading="loading">Run CORS Test</v-btn>
+  <div style="padding: 20px; font-family: sans-serif;">
+    <h1>CORS Debug Tool</h1>
+    <p>This will test the deployed backend’s /authentication CORS headers.</p>
 
-        <div v-if="results.length" class="mt-4">
-          <div v-for="res in results" :key="res.type" class="mb-6">
-            <h3 class="text-h6">{{ res.type }} Response</h3>
-            <p>Status: {{ res.status }}</p>
-            <v-table density="compact">
-              <thead>
-                <tr>
-                  <th>Header</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(val, key) in res.headers" :key="key">
-                  <td>{{ key }}</td>
-                  <td>{{ val }}</td>
-                </tr>
-              </tbody>
-            </v-table>
-          </div>
-        </div>
-      </v-card-text>
-    </v-card>
-  </v-container>
+    <v-btn color="primary" @click="runTest">Run CORS Test</v-btn>
+
+    <div v-if="loading">Testing...</div>
+
+    <div v-if="error" style="color: red; margin-top: 20px;">
+      <strong>Error:</strong> {{ error }}
+    </div>
+
+    <div v-if="result" style="margin-top: 20px;">
+      <h2>Response Headers</h2>
+      <pre>{{ JSON.stringify(result.headers, null, 2) }}</pre>
+
+      <h3>Status</h3>
+      <p>{{ result.status }} {{ result.statusText }}</p>
+
+      <h3>CORS Allowed?</h3>
+      <p :style="{ color: corsAllowed ? 'green' : 'red' }">
+        {{ corsAllowed ? '✅ Yes' : '❌ No' }}
+      </p>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 
+// Set your deployed backend URL here:
+const BACKEND_URL = 'https://shop-system-5ow7.vercel.app/authentication'
+
 const loading = ref(false)
-const results = ref<any[]>([])
+const error = ref('')
+const result = ref<any>(null)
+const corsAllowed = ref(false)
 
-// Change to your deployed backend URL
-const API_URL = process.env.API_URL || 'https://shop-system-5ow7.vercel.app'
-
-async function runTests() {
+const runTest = async () => {
   loading.value = true
-  results.value = []
+  error.value = ''
+  result.value = null
+  corsAllowed.value = false
 
   try {
-    // 1. OPTIONS preflight request
-    const optionsRes = await fetch(`${API_URL}/authentication`, {
+    const res = await fetch(BACKEND_URL, {
       method: 'OPTIONS',
-      headers: {
-        'Access-Control-Request-Method': 'POST',
-        'Access-Control-Request-Headers': 'Content-Type, Authorization',
-        Origin: window.location.origin
-      }
-    })
-    results.value.push({
-      type: 'OPTIONS Preflight',
-      status: optionsRes.status,
-      headers: Object.fromEntries(optionsRes.headers.entries())
+      mode: 'cors',
     })
 
-    // 2. Actual POST request with dummy body
-    const postRes = await fetch(`${API_URL}/authentication`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Origin: window.location.origin
-      },
-      body: JSON.stringify({
-        strategy: 'local',
-        email: 'test@example.com',
-        password: 'wrongpass'
-      })
+    const headers: Record<string, string> = {}
+    res.headers.forEach((val, key) => {
+      headers[key] = val
     })
-    results.value.push({
-      type: 'POST Request',
-      status: postRes.status,
-      headers: Object.fromEntries(postRes.headers.entries())
-    })
-  } catch (err) {
-    console.error('CORS Test Error:', err)
+
+    result.value = {
+      status: res.status,
+      statusText: res.statusText,
+      headers,
+    }
+
+    corsAllowed.value = !!headers['access-control-allow-origin']
+  } catch (err: any) {
+    error.value = err.message || 'Unknown error'
   } finally {
     loading.value = false
   }
