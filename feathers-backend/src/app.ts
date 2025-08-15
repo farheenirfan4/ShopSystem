@@ -50,7 +50,7 @@ const allowedOrigin = 'https://shop-system-hafg.vercel.app'
 
 // Load app configuration
 app.use(cors())
-app.options('*', cors(corsOptions))
+//app.options('*', cors(corsOptions))
 //app.options('*', cors()); 
 app.configure(configuration(configurationValidator))
 //app.use(cors())
