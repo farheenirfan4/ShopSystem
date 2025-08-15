@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRuntimeConfig } from '#app';
-const config = useRuntimeConfig();
-const API_BASE_URL = config.public.apiBase;
+//const config = useRuntimeConfig();
+
 
 //const config = useRuntimeConfig()
 
@@ -35,6 +35,7 @@ const loadUserFromStorage = () => {
 }
 
 export function useAuth() {
+  const config = useRuntimeConfig();
   // Only try to load in browser
   if (process.client && (!token.value || !user.value)) {
     loadUserFromStorage()
