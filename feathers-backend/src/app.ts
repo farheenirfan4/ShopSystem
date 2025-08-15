@@ -25,13 +25,17 @@ import { changeLogs } from './services/changelogs/changelogs'
 //import cors from 'cors';
 const app: Application = express(feathers())
 
-// Load app configuration
-app.use(cors({
-  origin: ['https://shop-system-hafg.vercel.app'], // frontend domain
+const allowedOrigin = 'https://shop-system-hafg.vercel.app'
+const corsOptions = {
+  origin: allowedOrigin,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-}));
+}
+
+// Load app configuration
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions))
 //app.options('*', cors()); 
 app.configure(configuration(configurationValidator))
 //app.use(cors())
@@ -45,7 +49,8 @@ app.configure(rest())
 app.configure(
   socketio({
     cors: {
-      origin: app.get('origins')
+      origin: 'https://shop-system-hafg.vercel.app',
+    credentials: true
     }
   })
 )

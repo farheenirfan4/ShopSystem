@@ -49,7 +49,10 @@ export function useAuth() {
         strategy: 'local',
         email,
         password
-      })
+      },
+    {
+    withCredentials: true // 🔹 ensures cookies/session work with CORS
+  })
 
       token.value = response.data.accessToken
       user.value = response.data.user
