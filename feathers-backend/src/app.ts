@@ -22,7 +22,6 @@ import { services } from './services/index'
 import { channels } from './channels'
 import { registerChangeLogListener } from './listeners/changeLogs.listener';
 import { changeLogs } from './services/changelogs/changelogs'
-//import cors from 'cors';
 
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -43,19 +42,18 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }
+
 const app: Application = express(feathers())
 
-const allowedOrigin = 'https://shop-system-hafg.vercel.app'
-
-
 // Load app configuration
-app.use(cors())
-//app.options('*', cors(corsOptions))
-//app.options('*', cors()); 
 app.configure(configuration(configurationValidator))
-//app.use(cors())
+
+// IMPORTANT: Configure CORS here at the top, using your custom options.
+app.use(cors(corsOptions)) // <-- THIS IS THE CORRECT WAY
+
 app.use(json())
 app.use(urlencoded({ extended: true }))
+
 // Host the public folder
 app.use('/', serveStatic(app.get('public')))
 
@@ -65,7 +63,7 @@ app.configure(
   socketio({
     cors: {
       origin: 'https://shop-system-hafg.vercel.app',
-    credentials: true
+      credentials: true
     }
   })
 )
@@ -73,7 +71,6 @@ app.configure(postgresql)
 app.configure(authentication)
 app.configure(services)
 app.configure(channels)
-//app.configure(changeLogs);
 
 // Configure a middleware for 404s and the error handler
 app.use(notFound())
@@ -90,6 +87,7 @@ app.hooks({
   after: {},
   error: {}
 })
+
 // Register application setup and teardown hooks here
 app.hooks({
   setup: [],
