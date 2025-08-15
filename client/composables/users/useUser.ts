@@ -2,6 +2,8 @@ import { ref, onMounted, computed } from 'vue';
 import { useAuth } from '../../composables/Authentication/useAuth';
 import { useRuntimeConfig } from '#app';
 
+//onst config = useRuntimeConfig();
+
 
 export interface User {
   id: string;
@@ -13,7 +15,7 @@ export interface User {
 }
 
 const { token, user } = useAuth(); // get token & user info
-const API_URL = 'http://localhost:3030/users';
+//const API_URL = 'http://localhost:3030/users';
 const config = useRuntimeConfig();
 const API_BASE_URL = config.public.apiBase;
 
@@ -56,7 +58,7 @@ const fetchUsers = async () => {
 // ✅ Create a new user
 const createUser = async (newUser: { username: string; email: string; password: string; roles?: string[] }) => {
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(`${config.public.apiUrl}/users`, {
       method: 'POST',
       headers: getHeaders(true),
       body: JSON.stringify(newUser)
@@ -72,7 +74,7 @@ const createUser = async (newUser: { username: string; email: string; password: 
 // ✅ Update an existing user
 const updateUser = async (id: string, updates: Partial<{ username: string; email: string; roles?: string[] }>) => {
   try {
-    const res = await fetch(`${API_URL}/${id}`, {
+    const res = await fetch(`${config.public.apiUrl}/users/${id}`, {
       method: 'PATCH',
       headers: getHeaders(true),
       body: JSON.stringify(updates)
@@ -89,7 +91,7 @@ const updateUser = async (id: string, updates: Partial<{ username: string; email
 // ✅ Delete a user
 const deleteUser = async (id: string) => {
   try {
-    const res = await fetch(`${API_URL}/${id}`, {
+    const res = await fetch(`${config.public.apiUrl}/users/${id}`, {
       method: 'DELETE',
       headers: getHeaders(false)
     });

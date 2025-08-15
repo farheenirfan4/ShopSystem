@@ -4,12 +4,14 @@ import { useRouter } from 'vue-router';
 import { useAuth } from '../../composables/Authentication/useAuth';
 import type { Player, SortItem } from '../../types/players'
 
+const config = useRuntimeConfig();
+
 
 
 const { user, token } = useAuth() 
 const loading = ref(true)
 // The base URL for your API endpoint
-const API_URL = 'http://localhost:3030/players-data'; // Replace with your actual API endpoint
+//const API_URL = 'http://localhost:3030/players-data'; // Replace with your actual API endpoint
 
 const {
   fetchPersonasConfig,
@@ -61,7 +63,7 @@ export const fetchFilteredUsers = async (personaId: number) => {
   }
   
   // Construct the final URL
-  const fullUrl = `${API_URL}?${queryParams.toString()}`;
+  const fullUrl = `${config.public.apiUrl}/players-data?${queryParams.toString()}`;
 
   // This is the URL you would send to your backend, e.g., using a library like axios or fetch
   console.log('Constructed URL:', fullUrl);
@@ -89,7 +91,7 @@ export const fetchData = async () => {
 
   loading.value = true
       try {
-        let url = 'http://localhost:3030/players-data?$includeCashDeposit=true'
+        let url = `${config.public.apiUrl}/players-data?$includeCashDeposit=true`
         const response = await fetch(url, {
           headers: {
         'Authorization': `Bearer ${token.value}` // Use the passed token

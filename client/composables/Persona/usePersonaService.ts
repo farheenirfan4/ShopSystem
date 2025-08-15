@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useAuth } from '../Authentication/useAuth' // <-- to get token
 
+const config = useRuntimeConfig();
+
 export interface PersonaConfig {
   id: number
   name: string
@@ -16,7 +18,7 @@ export interface PersonaConfig {
   updatedAt: string
 }
 
-const API_URL = 'http://localhost:3030/personas-config'
+//const API_URL = 'http://localhost:3030/personas-config'
 
 const forPayingUsers = ref<boolean>(false)
 const maxLevel = ref<number>(0)
@@ -51,7 +53,7 @@ export function usePersonaService() {
     }
 
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${config.public.apiUrl}/personas-config`, {
         headers: {
           Authorization: `Bearer ${token.value}`
         }
@@ -85,7 +87,7 @@ export function usePersonaService() {
     }
 
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${config.public.apiUrl}/personas-config`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -155,7 +157,7 @@ export function usePersonaService() {
   }
 
   try {
-    const res = await fetch(`${API_URL}/${personaId}`, {
+    const res = await fetch(`${config.public.apiUrl}/personas-config/${personaId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

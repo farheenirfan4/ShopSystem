@@ -1,8 +1,9 @@
 // composables/DisplayConfig/useDisplayConfigService.ts
 import { ref } from 'vue'
 import { useAuth } from '../../composables/Authentication/useAuth'
+const config = useRuntimeConfig();
 
-const API_URL = 'http://localhost:3030/display-config' // Feathers endpoint
+//const API_URL = 'http://localhost:3030/display-config' // Feathers endpoint
 
 export interface DisplayConfig {
  id: number,
@@ -44,7 +45,7 @@ export const useDisplayConfigService = () => {
     }
 
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${config.public.apiUrl}/display-config`, {
         headers: { Authorization: `Bearer ${token.value}` }
       })
       if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`)
@@ -78,7 +79,7 @@ export const useDisplayConfigService = () => {
     }
 
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${config.public.apiUrl}/display-config`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -142,7 +143,7 @@ export const useDisplayConfigService = () => {
     }
 
     try {
-      const res = await fetch(`${API_URL}/${configId}`, {
+      const res = await fetch(`${config.public.apiUrl}/display-config/${configId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

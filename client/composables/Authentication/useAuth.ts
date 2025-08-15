@@ -8,7 +8,7 @@ const API_BASE_URL = config.public.apiBase;
 //const config = useRuntimeConfig()
 
 
-const API_URL = 'http://localhost:3030'
+//const API_URL = 'http://localhost:3030'
 
 interface LoginResponse {
   accessToken: string

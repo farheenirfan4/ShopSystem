@@ -2,10 +2,12 @@ import { ref } from "vue"
 import { offersSchema, type Offer } from "../../schemas/offerSchema"
 import { useAuth } from "../Authentication/useAuth" // <-- get token from here
 
+const config = useRuntimeConfig();
+
 // Setup AJV
 
 
-const API_URL = "http://localhost:3030/offers"
+//const API_URL = "http://localhost:3030/offers"
 
 export function useOffers() {
   const { token } = useAuth() // ✅ get token directly
@@ -26,7 +28,7 @@ export function useOffers() {
     loading.value = true
     error.value = null
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${config.public.apiUrl}/offers`, {
         headers: getHeaders(),
       })
       if (!res.ok) throw new Error(`Failed to fetch offers: ${res.statusText}`)
@@ -44,7 +46,7 @@ export function useOffers() {
   const addOffer = async (newOffer: Partial<Offer>) => {
     try {
       //validateBeforeSend(newOffer)
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${config.public.apiUrl}/offers`, {
         method: "POST",
         headers: getHeaders(),
         body: JSON.stringify(newOffer)
@@ -62,7 +64,7 @@ export function useOffers() {
   const updateOffer = async (id: string, updatedOffer: Offer) => {
     try {
       //validateBeforeSend(updatedOffer)
-      const res = await fetch(`${API_URL}/${id}`, {
+      const res = await fetch(`${config.public.apiUrl}/offers/${id}`, {
         method: "PATCH",
         headers: getHeaders(),
         body: JSON.stringify(updatedOffer)
@@ -80,7 +82,7 @@ export function useOffers() {
   // 4️⃣ Delete offer
   const deleteOffer = async (id: string) => {
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
+      const res = await fetch(`${config.public.apiUrl}/offers/${id}`, {
         method: "DELETE",
         headers: getHeaders(),
       })
