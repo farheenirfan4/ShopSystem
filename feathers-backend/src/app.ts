@@ -26,6 +26,12 @@ import { changeLogs } from './services/changelogs/changelogs'
 const app: Application = express(feathers())
 
 // Load app configuration
+app.use(cors({
+  origin: ['https://shop-system-hafg.vercel.app'], // frontend domain
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.configure(configuration(configurationValidator))
 app.use(cors())
 app.use(json())
@@ -51,13 +57,6 @@ app.configure(channels)
 // Configure a middleware for 404s and the error handler
 app.use(notFound())
 app.use(errorHandler({ logger }))
-app.use(cors({
-  origin: ['https://shop-system-hafg.vercel.app'], // your frontend domain
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  //credentials: true
-}));
 
 registerChangeLogListener(app);
 
