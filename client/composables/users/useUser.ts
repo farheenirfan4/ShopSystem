@@ -1,5 +1,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useAuth } from '../../composables/Authentication/useAuth';
+import { useRuntimeConfig } from '#app';
+
 
 export interface User {
   id: string;
@@ -12,6 +14,8 @@ export interface User {
 
 const { token, user } = useAuth(); // get token & user info
 const API_URL = 'http://localhost:3030/users';
+const config = useRuntimeConfig();
+const API_BASE_URL = config.public.apiBase;
 
 const userData = ref<User[]>([]);
 const isLoading = ref(false);
@@ -32,9 +36,9 @@ const getHeaders = (isJSON = true) => {
 const fetchUsers = async () => {
   isLoading.value = true;
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(`${API_BASE_URL}/users`, {
       method: 'GET',
-      headers: getHeaders(false) // GET doesn't need Content-Type
+      headers: getHeaders(false) 
     });
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();

@@ -67,9 +67,9 @@ if (query?.$includeCashDeposit) {
   )
   .where('p.collection', 'UserState')
   .andWhere('p.key', 'UserStats')
-  .andWhereRaw(
-    `(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit')::numeric > 0`
-  );
+  //.andWhereRaw(
+    //`(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit')::numeric`
+  //);
   
 }
 

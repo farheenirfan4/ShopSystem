@@ -1,6 +1,10 @@
 // composables/Authentication/useAuth.ts
 import { ref } from 'vue'
 import axios from 'axios'
+import { useRuntimeConfig } from '#app';
+const config = useRuntimeConfig();
+const API_BASE_URL = config.public.apiBase;
+
 
 const API_URL = 'http://localhost:3030'
 
@@ -38,7 +42,7 @@ export function useAuth() {
     loading.value = true
     error.value = null
     try {
-      const response = await axios.post<LoginResponse>(`${API_URL}/authentication`, {
+      const response = await axios.post<LoginResponse>(`${API_BASE_URL}/authentication`, {
         strategy: 'local',
         email,
         password

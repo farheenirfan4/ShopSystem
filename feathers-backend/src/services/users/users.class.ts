@@ -5,6 +5,7 @@ import type { KnexAdapterParams, KnexAdapterOptions } from '@feathersjs/knex'
 
 import type { Application } from '../../declarations'
 import type { User, UserData, UserPatch, UserQuery } from './users.schema'
+import pool from '../../db'; 
 
 export type { User, UserData, UserPatch, UserQuery }
 
