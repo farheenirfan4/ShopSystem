@@ -53,7 +53,10 @@ app.use(notFound())
 app.use(errorHandler({ logger }))
 app.use(cors({
   origin: ['https://shop-system-hafg.vercel.app'], // your frontend domain
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  //credentials: true
 }));
 
 registerChangeLogListener(app);
