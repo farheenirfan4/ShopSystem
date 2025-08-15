@@ -5,6 +5,8 @@ import { useRuntimeConfig } from '#app';
 const config = useRuntimeConfig();
 const API_BASE_URL = config.public.apiBase;
 
+//const config = useRuntimeConfig()
+
 
 const API_URL = 'http://localhost:3030'
 
@@ -42,7 +44,7 @@ export function useAuth() {
     loading.value = true
     error.value = null
     try {
-      const response = await axios.post<LoginResponse>(`${process.env.NUXT_PUBLIC_API_BASE}/authentication`, {
+      const response = await axios.post<LoginResponse>(`${config.public.apiUrl}/authentication`, {
         strategy: 'local',
         email,
         password

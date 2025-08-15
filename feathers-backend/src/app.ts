@@ -22,7 +22,7 @@ import { services } from './services/index'
 import { channels } from './channels'
 import { registerChangeLogListener } from './listeners/changeLogs.listener';
 import { changeLogs } from './services/changelogs/changelogs'
-
+//import cors from 'cors';
 const app: Application = express(feathers())
 
 // Load app configuration
@@ -51,6 +51,10 @@ app.configure(channels)
 // Configure a middleware for 404s and the error handler
 app.use(notFound())
 app.use(errorHandler({ logger }))
+app.use(cors({
+  origin: ['https://shop-system-5ow7.vercel.app'], // your frontend domain
+  credentials: true
+}));
 
 registerChangeLogListener(app);
 
