@@ -1,5 +1,8 @@
+const config = useRuntimeConfig();
+
+
 export const useApi = () => {
-  const baseUrl = 'http://localhost:3030' // 🔁 Change if needed
+  const baseUrl = `${config.public.apiUrl}` // 🔁 Change if needed
 
   const post = async (endpoint: string, data: any) => {
     try {

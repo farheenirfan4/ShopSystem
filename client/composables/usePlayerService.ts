@@ -5,6 +5,8 @@ import type { Player, SortItem } from '../types/players'
 import { useAuthFetch } from './useAuthFetch'
 import debounce from 'lodash.debounce'
 import type { PersonaConfig } from '~/types/PersonaConfig'
+const config = useRuntimeConfig();
+
 
 export function usePlayerService() {
   const users = ref<Player[]>([])
@@ -25,7 +27,7 @@ export function usePlayerService() {
   const fetchData = async () => {
    loading.value = true
     try {
-      let url = 'http://localhost:3030/players-data?$includeCashDeposit=true'
+      let url = `${config.public.apiUrl}?$includeCashDeposit=true`
 
     
       

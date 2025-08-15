@@ -13,10 +13,12 @@ export function useChangeLogService() {
   const searchUsername = ref('')
   const debouncedFetchData = debounce(() => fetchChangeLogData(), 300)
 
+  const config = useRuntimeConfig();
+
   const fetchChangeLogData = async () => {
    loading.value = true
     try {
-      let url = 'http://localhost:3030/change-logs?$limit=100'
+      let url = `${config.public.apiUrl}/change-logs?$limit=100`
       
       const res: { total: number; data: ChangeLog[] } | ChangeLog[] = await useAuthFetch(url)
       changeLogs.value = (Array.isArray(res) ? res : res.data).map(changeLogs => ({
