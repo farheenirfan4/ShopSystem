@@ -34,7 +34,7 @@ export const displayConfigureSchema = {
       }
     },
     priority: {
-      type: "string",
+      type: "number",
       minLength: 1,
       errorMessage: {
         type: "Priority must be a string",
