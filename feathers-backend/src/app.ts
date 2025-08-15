@@ -29,15 +29,7 @@ const allowedOrigins = [
 ]
 
 const corsOptions = {
-  origin: (origin: string | undefined, callback: any) => {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true)
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true)
-    } else {
-      return callback(new Error('Not allowed by CORS'))
-    }
-  },
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -49,7 +41,7 @@ const app: Application = express(feathers())
 app.configure(configuration(configurationValidator))
 
 // IMPORTANT: Configure CORS here at the top, using your custom options.
-app.use(cors()) // <-- THIS IS THE CORRECT WAY
+app.use(cors(corsOptions)) // <-- THIS IS THE CORRECT WAY
 
 app.use(json())
 app.use(urlencoded({ extended: true }))
