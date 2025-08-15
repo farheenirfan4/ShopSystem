@@ -49,7 +49,7 @@ const app: Application = express(feathers())
 app.configure(configuration(configurationValidator))
 
 // IMPORTANT: Configure CORS here at the top, using your custom options.
-app.use(cors(corsOptions)) // <-- THIS IS THE CORRECT WAY
+app.use(cors()) // <-- THIS IS THE CORRECT WAY
 
 app.use(json())
 app.use(urlencoded({ extended: true }))
