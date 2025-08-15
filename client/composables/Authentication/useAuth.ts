@@ -42,7 +42,7 @@ export function useAuth() {
     loading.value = true
     error.value = null
     try {
-      const response = await axios.post<LoginResponse>(`${API_BASE_URL}/authentication`, {
+      const response = await axios.post<LoginResponse>(`${process.env.NUXT_PUBLIC_API_BASE}/authentication`, {
         strategy: 'local',
         email,
         password
