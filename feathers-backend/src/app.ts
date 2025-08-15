@@ -60,12 +60,7 @@ app.use('/', serveStatic(app.get('public')))
 // Configure services and real-time functionality
 app.configure(rest())
 app.configure(
-  socketio({
-    cors: {
-      origin: 'https://shop-system-hafg.vercel.app',
-      credentials: true
-    }
-  })
+  socketio()
 )
 app.configure(postgresql)
 app.configure(authentication)
