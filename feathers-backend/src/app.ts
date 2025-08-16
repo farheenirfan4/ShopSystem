@@ -56,8 +56,15 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept')
     res.header('Access-Control-Allow-Credentials', 'true')
-    return res.sendStatus(200) // ✅ Always respond OK to preflight
+if (req.method === 'OPTIONS') {
+    return res.sendStatus(200) // ✅ Force OK for preflight
+  } // ✅ Always respond OK to preflight
   }
+  next()
+})
+
+app.use((req, res, next) => {
+  console.log('Incoming request:', req.method, req.url, req.headers.origin)
   next()
 })
 app.use(cors(corsOptions))
