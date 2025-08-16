@@ -1,8 +1,11 @@
-<!-- pages/index.vue -->
-<template>
-  <SignInForm />
-</template>
+<script setup lang="ts">
+import SignInForm from '~/components/SignInForm.vue';
+definePageMeta({
+  layout: 'empty' // No navbar for this page
+})
 
-<script setup>
-import SignInForm from '../pages/signin.vue'
 </script>
+
+<template>
+  <SignInForm></SignInForm>
+</template>

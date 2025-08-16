@@ -50,12 +50,14 @@ const corsOptions = {
 };
 
 const app: Application = express(feathers())
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions))
 
 // Load app configuration
 app.configure(configuration(configurationValidator))
 
 // IMPORTANT: Configure CORS here at the top, using your custom options.
-app.use(cors(corsOptions))
+
 
 app.use(json())
 app.use(urlencoded({ extended: true }))
