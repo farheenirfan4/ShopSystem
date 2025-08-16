@@ -51,7 +51,10 @@ const corsOptions = {
 
 const app: Application = express(feathers())
 app.use(cors(corsOptions))
-app.options('*', cors(corsOptions))
+app.options('*', cors({
+  origin: true,
+  credentials: true
+}))
 
 // Load app configuration
 app.configure(configuration(configurationValidator))
