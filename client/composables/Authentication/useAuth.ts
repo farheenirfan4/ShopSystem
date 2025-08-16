@@ -50,9 +50,9 @@ export function useAuth() {
         email,
         password
       },)
-    //{
-    //withCredentials: true // 🔹 ensures cookies/session work with CORS
-  //})
+    {
+    withCredentials: true // 🔹 ensures cookies/session work with CORS
+  }
 
       token.value = response.data.accessToken
       user.value = response.data.user
