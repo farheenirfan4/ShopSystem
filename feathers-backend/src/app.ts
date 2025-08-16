@@ -50,6 +50,16 @@ const corsOptions = {
 };
 
 const app: Application = express(feathers())
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept')
+    res.header('Access-Control-Allow-Credentials', 'true')
+    return res.sendStatus(200)
+  }
+  next()
+})
 app.use(cors(corsOptions))
 app.options('*', cors({
   origin: true,
