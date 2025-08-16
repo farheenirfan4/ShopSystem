@@ -45,14 +45,16 @@ export function useAuth() {
     loading.value = true
     error.value = null
     try {
-      const response = await axios.post<LoginResponse>(`${config.public.apiUrl}api/authentication`, {
+      const response = await axios.post<LoginResponse>('/api/authentication', {
         strategy: 'local',
         email,
         password
       },
-    {
-    withCredentials: true // 🔹 ensures cookies/session work with CORS
-  })
+   // {
+   // withCredentials: true // 🔹 ensures cookies/session work with CORS
+  //}
+  )
+
 
       token.value = response.data.accessToken
       user.value = response.data.user
