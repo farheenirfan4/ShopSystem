@@ -38,7 +38,7 @@ const getHeaders = (isJSON = true) => {
 const fetchUsers = async () => {
   isLoading.value = true;
   try {
-    const res = await fetch(`${API_BASE_URL}/users`, {
+    const res = await fetch(`${config.public.apiUrl}/users`, {
       method: 'GET',
       headers: getHeaders(false) 
     });
