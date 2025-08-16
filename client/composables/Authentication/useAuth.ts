@@ -45,7 +45,7 @@ export function useAuth() {
     loading.value = true
     error.value = null
     try {
-      const response = await axios.post<LoginResponse>(`${config.public.apiUrl}authentication`, {
+      const response = await axios.post<LoginResponse>(`${config.public.apiUrl}api/authentication`, {
         strategy: 'local',
         email,
         password
