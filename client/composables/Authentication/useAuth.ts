@@ -8,7 +8,7 @@ import { useRuntimeConfig } from '#app';
 //const config = useRuntimeConfig()
 
 
-//const API_URL = 'http://localhost:3030'
+const apiUrl = 'http://localhost:3030'
 
 interface LoginResponse {
   accessToken: string
@@ -45,7 +45,7 @@ export function useAuth() {
     loading.value = true
     error.value = null
     try {
-      const response = await axios.post<LoginResponse>('/api/authentication', {
+      const response = await axios.post<LoginResponse>(`${apiUrl}/authentication`, {
         strategy: 'local',
         email,
         password
