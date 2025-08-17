@@ -35,6 +35,7 @@ const productionConfig = {
     service: 'users',
     secret: process.env.AUTH_SECRET || 'secret',
     authStrategies: ['jwt', 'local'],
+    path: "/api/authentication",
     jwtOptions: {
       header: { typ: 'access' },
       audience: process.env.FRONTEND_URL,
