@@ -2,10 +2,6 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRuntimeConfig } from '#app';
-//const config = useRuntimeConfig();
-
-
-//const config = useRuntimeConfig()
 
 
 const apiUrl = 'http://localhost:3030'
