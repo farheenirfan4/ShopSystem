@@ -1,16 +1,17 @@
 // src/app.ts
 import { feathers } from '@feathersjs/feathers'
-import express, { json, urlencoded, rest, cors } from '@feathersjs/express'
-import {services} from './services/index'
+import express, { json, urlencoded, rest } from '@feathersjs/express'
+import cors from 'cors'
+import { services } from './services'
 
 const app = express(feathers())
 
 // middlewares
 app.use(json())
 app.use(urlencoded({ extended: true }))
-//app.use(cors())
+app.use(cors())
 
-// REST API
+// REST transport
 app.configure(rest())
 
 // register services
