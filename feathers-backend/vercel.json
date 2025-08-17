@@ -11,12 +11,7 @@
       "src": "/api/(.*)",
       "dest": "/api/index.ts"
     }
-  ],
-  "functions": {
-    "api/index.ts": {
-      "includeFiles": "config/production.json"
-    }
-  }
+  ]
 }
 
 

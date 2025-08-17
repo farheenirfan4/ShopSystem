@@ -21,7 +21,29 @@ import { authentication } from './authentication'
 import { services } from './services/index'
 import { channels } from './channels'
 import { registerChangeLogListener } from './listeners/changeLogs.listener'
+import { config as dotenvConfig } from 'dotenv';
 
+dotenvConfig();
+
+const productionConfig = {
+  host: '0.0.0.0',
+  port: 3030,
+  public: './public/',
+  origins: [process.env.FRONTEND_URL || 'http://localhost:3000'],
+  authentication: {
+    entity: 'user',
+    service: 'users',
+    secret: process.env.AUTH_SECRET || 'secret',
+    authStrategies: ['jwt', 'local'],
+    jwtOptions: {
+      header: { typ: 'access' },
+      audience: process.env.FRONTEND_URL,
+      algorithm: 'HS256',
+      expiresIn: '1d'
+    },
+    local: { usernameField: 'email', passwordField: 'password' }
+  }
+};
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'https://shop-system-hafg.vercel.app'
@@ -119,6 +141,13 @@ app.hooks({
   ]
 })
 
+if (!app.get('authentication')) {
+  
+  app.set('authentication', productionConfig.authentication);
+  console.log('[Authentication] Default authentication configuration set');
+}
+
 console.log('[app.ts] Feathers app initialized ✅')
+
 
 export { app }
