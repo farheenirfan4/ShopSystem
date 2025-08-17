@@ -52,7 +52,7 @@ app.use(urlencoded({ extended: true }))
 
 // --- Public folder ---
 console.log('[app.ts] Serving static files from:', app.get('public'))
-app.use('/', serveStatic(app.get('public')))
+//app.use('/', serveStatic(app.get('public')))
 
 // --- REST + Socket.io ---
 console.log('[app.ts] Configuring REST transport...')
