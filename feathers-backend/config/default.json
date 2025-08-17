@@ -9,10 +9,10 @@
     "default": 100,
     "max": 12078
   },
-  "postgresql": {
-    "client": "pg",
-    "connection": "postgresql://postgres:2115412@localhost:5432/userDb"
-  },
+  //"postgresql": {
+    //"client": "pg",
+    //"connection": "postgresql://postgres:2115412@localhost:5432/userDb"
+  //},
   "authentication": {
     "entity": "user",
     "service": "users",
