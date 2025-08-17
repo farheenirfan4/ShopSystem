@@ -3,36 +3,47 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { app } from '../src/app';
 
-// This flag tracks if the app has been set up for the current Lambda instance.
-let isAppSetup = false;
+let isAppSetup = false; // Tracks cold start vs warm start
 
-// This is the main handler for the Vercel serverless function.
 export default async function (req: VercelRequest, res: VercelResponse) {
-  try {
+  console.log('----------------------------------------');
+  console.log('[api/index.ts] Incoming request:', req.method, req.url);
+  console.log('[api/index.ts] Origin:', req.headers.origin);
+  console.log('[api/index.ts] isAppSetup:', isAppSetup);
 
+  try {
+    // Handle preflight requests
     if (req.method === 'OPTIONS') {
+      console.log('[api/index.ts] Handling OPTIONS preflight request');
       res.setHeader('Access-Control-Allow-Origin', 'https://shop-system-hafg.vercel.app');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept, x-client-key, x-client-token, x-client-secret');
+      res.setHeader(
+        'Access-Control-Allow-Headers',
+        'Content-Type, Authorization, Origin, X-Requested-With, Accept, x-client-key, x-client-token, x-client-secret'
+      );
       res.setHeader('Access-Control-Allow-Credentials', 'true');
       res.setHeader('Access-Control-Max-Age', '86400');
-      return res.status(204).end(); // Send a 204 No Content response for preflight
+      console.log('[api/index.ts] Preflight response sent (204)');
+      return res.status(204).end();
     }
-    // Only set up the Feathers app once per cold start.
-    // This is the crucial step to ensure database connections and services are ready.
+
+    // Setup app once per cold start
     if (!isAppSetup) {
+      console.log('[api/index.ts] Cold start detected → running app.setup()');
       await app.setup();
       isAppSetup = true;
+      console.log('[api/index.ts] app.setup() completed ✅');
+    } else {
+      console.log('[api/index.ts] Warm start → app.setup() skipped');
     }
 
-    // Use app.handle to explicitly process the request and response.
-    // This is the most reliable way to handle the request given
-    // the TypeScript type constraints.
+    // Hand over request to Feathers
+    console.log('[api/index.ts] Passing request to Feathers app.handle()');
     (app as any).handle(req, res);
 
-  } catch (error) {
-    console.error(error);
-    // Send a consistent error response for any unhandled exceptions
+  } catch (error: any) {
+    console.error('[api/index.ts] Error occurred ❌', error);
+
     res.status(500).json({
       code: 500,
       message: 'Internal Server Error',

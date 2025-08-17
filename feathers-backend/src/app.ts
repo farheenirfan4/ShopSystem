@@ -1,4 +1,4 @@
-// For more information about this file see https://dove.feathersjs.com/guides/cli/application.html
+// app.ts
 import { feathers } from '@feathersjs/feathers'
 import express, {
   rest,
@@ -20,73 +20,45 @@ import { postgresql } from './postgresql'
 import { authentication } from './authentication'
 import { services } from './services/index'
 import { channels } from './channels'
-import { registerChangeLogListener } from './listeners/changeLogs.listener';
-import { changeLogs } from './services/changelogs/changelogs'
+import { registerChangeLogListener } from './listeners/changeLogs.listener'
 
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'https://shop-system-hafg.vercel.app'
 ]
 
-// Corrected CORS options
-const corsOptions = {
-  // Use a function to dynamically check if the origin is allowed
-  origin: (origin: string | undefined, callback: any) => {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-
-    // Check if the incoming origin is in our allowed list
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Best practice to include all methods
-  allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'] // Also best practice
-};
+console.log('[app.ts] Initializing Feathers app...')
 
 const app: Application = express(feathers())
+
+// --- CORS ---
+console.log('[app.ts] Configuring CORS with allowed origins:', allowedOrigins)
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }))
+
+// --- Incoming request logger ---
 app.use((req, res, next) => {
-  if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept')
-    res.header('Access-Control-Allow-Credentials', 'true')
-if (req.method === 'OPTIONS') {
-    return res.sendStatus(200) // ✅ Force OK for preflight
-  } // ✅ Always respond OK to preflight
-  }
+  console.log('[app.ts] Incoming request:', req.method, req.url, 'Origin:', req.headers.origin)
   next()
 })
 
-app.use((req, res, next) => {
-  console.log('Incoming request:', req.method, req.url, req.headers.origin)
-  next()
-})
-app.use(cors(corsOptions))
-app.options('*', cors({
-  origin: true,
-  credentials: true
-}))
-
-// Load app configuration
+// --- Load app configuration ---
+console.log('[app.ts] Loading configuration...')
 app.configure(configuration(configurationValidator))
 
-// IMPORTANT: Configure CORS here at the top, using your custom options.
-
-
+// --- Body parsers ---
+console.log('[app.ts] Configuring body parsers (json + urlencoded)')
 app.use(json())
 app.use(urlencoded({ extended: true }))
 
-// Host the public folder
+// --- Public folder ---
+console.log('[app.ts] Serving static files from:', app.get('public'))
 app.use('/', serveStatic(app.get('public')))
 
-// Configure services and real-time functionality
+// --- REST + Socket.io ---
+console.log('[app.ts] Configuring REST transport...')
 app.configure(rest())
+
+console.log('[app.ts] Configuring Socket.io with allowed origins...')
 app.configure(
   socketio({
     cors: {
@@ -94,19 +66,35 @@ app.configure(
       credentials: true
     }
   })
-);
+)
+
+// --- Database ---
+console.log('[app.ts] Setting up PostgreSQL...')
 app.configure(postgresql)
+
+// --- Authentication ---
+console.log('[app.ts] Setting up authentication...')
 app.configure(authentication)
+
+// --- Services ---
+console.log('[app.ts] Registering services...')
 app.configure(services)
+
+// --- Channels ---
+console.log('[app.ts] Configuring channels...')
 app.configure(channels)
 
-// Configure a middleware for 404s and the error handler
+// --- Error + 404 handlers ---
+console.log('[app.ts] Registering notFound + errorHandler middlewares...')
 app.use(notFound())
 app.use(errorHandler({ logger }))
 
-registerChangeLogListener(app);
+// --- ChangeLog Listener ---
+console.log('[app.ts] Registering changeLog listener...')
+registerChangeLogListener(app)
 
-// Register hooks that run on all service methods
+// --- Global hooks ---
+console.log('[app.ts] Registering global hooks...')
 app.hooks({
   around: {
     all: [logError]
@@ -116,10 +104,21 @@ app.hooks({
   error: {}
 })
 
-// Register application setup and teardown hooks here
+// --- Lifecycle hooks ---
+console.log('[app.ts] Registering setup & teardown hooks...')
 app.hooks({
-  setup: [],
-  teardown: []
+  setup: [
+    async () => {
+      console.log('[app.ts] 🔧 App setup hook running...')
+    }
+  ],
+  teardown: [
+    async () => {
+      console.log('[app.ts] 🛑 App teardown hook running...')
+    }
+  ]
 })
+
+console.log('[app.ts] Feathers app initialized ✅')
 
 export { app }
