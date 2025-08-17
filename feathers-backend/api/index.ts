@@ -1,4 +1,4 @@
-import app from '../src/app'
+import {app} from '../src/app'
 import type { IncomingMessage, ServerResponse } from 'http'
 
 // Vercel will pass (req, res) here
