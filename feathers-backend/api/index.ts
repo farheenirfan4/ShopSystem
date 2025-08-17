@@ -7,7 +7,7 @@ let isAppSetup = false;
 
 // Allowed origins for CORS
 const allowedOrigins = [
-  'https://shop-system-hafg.vercel.app',
+  'https://shop-system-hafg.vercel.app/api/authentication',
   'http://localhost:3000'
 ];
 
