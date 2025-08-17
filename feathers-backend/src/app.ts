@@ -45,7 +45,6 @@ const productionConfig = {
   }
 };
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000',
   'https://shop-system-hafg.vercel.app'
 ]
 
