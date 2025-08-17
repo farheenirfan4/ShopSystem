@@ -5,7 +5,7 @@ import { useRuntimeConfig } from '#app';
 //const config = useRuntimeConfig();
 
 
-//const config = useRuntimeConfig()
+const config = useRuntimeConfig()
 
 
 const apiUrl = 'http://localhost:3030'
@@ -45,7 +45,7 @@ export function useAuth() {
     loading.value = true
     error.value = null
     try {
-      const response = await axios.post<LoginResponse>('/api/authentication', {
+      const response = await axios.post<LoginResponse>('https://shop-system-5ow7.vercel.app/api/authentication', {
         strategy: 'local',
         email,
         password
