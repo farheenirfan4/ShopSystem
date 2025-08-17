@@ -9,7 +9,6 @@ import express, {
   notFound,
   errorHandler
 } from '@feathersjs/express'
-import { Request, Response, NextFunction } from 'express'
 import configuration from '@feathersjs/configuration'
 import socketio from '@feathersjs/socketio'
 
@@ -25,18 +24,69 @@ import { registerChangeLogListener } from './listeners/changeLogs.listener';
 import { changeLogs } from './services/changelogs/changelogs'
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000'
-];
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  'https://shop-system-hafg.vercel.app'
+]
 
 // Corrected CORS options
+const corsOptions = {
+  // Use a function to dynamically check if the origin is allowed
+  origin: (origin: string | undefined, callback: any) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
 
-const app: Application = express(feathers());
-app.use(json());
-app.use(urlencoded({ extended: true }));
+    // Check if the incoming origin is in our allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Best practice to include all methods
+  allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'] // Also best practice
+};
+
+const app: Application = express(feathers())
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept')
+    res.header('Access-Control-Allow-Credentials', 'true')
+if (req.method === 'OPTIONS') {
+    return res.sendStatus(200) // ✅ Force OK for preflight
+  } // ✅ Always respond OK to preflight
+  }
+  next()
+})
+
+app.use((req, res, next) => {
+  console.log('Incoming request:', req.method, req.url, req.headers.origin)
+  next()
+})
+app.use(cors(corsOptions))
+app.options('*', cors({
+  origin: true,
+  credentials: true
+}))
+
+// Load app configuration
+app.configure(configuration(configurationValidator))
+
+// IMPORTANT: Configure CORS here at the top, using your custom options.
 
 
-//app.use('/', serveStatic(app.get('public')));
-app.configure(rest());
+app.use(json())
+app.use(urlencoded({ extended: true }))
+
+// Host the public folder
+app.use('/', serveStatic(app.get('public')))
+
+// Configure services and real-time functionality
+app.configure(rest())
 app.configure(
   socketio({
     cors: {
@@ -45,14 +95,14 @@ app.configure(
     }
   })
 );
-app.configure(postgresql);
-app.configure(authentication);
-app.configure(services);
-app.configure(channels);
+app.configure(postgresql)
+app.configure(authentication)
+app.configure(services)
+app.configure(channels)
 
 // Configure a middleware for 404s and the error handler
-app.use(notFound());
-app.use(errorHandler({ logger }));
+app.use(notFound())
+app.use(errorHandler({ logger }))
 
 registerChangeLogListener(app);
 
@@ -64,12 +114,12 @@ app.hooks({
   before: {},
   after: {},
   error: {}
-});
+})
 
 // Register application setup and teardown hooks here
 app.hooks({
   setup: [],
   teardown: []
-});
+})
 
-export { app };
+export { app }

@@ -7,6 +7,6 @@ export const primaryDb = knex({
     port: 5432,
     user: 'postgres',
     password: '2115412',
-    database: 'postgres' // this is your second DB
+    database: 'postgres' // this is my second DB
   }
 })
