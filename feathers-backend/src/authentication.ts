@@ -1,4 +1,3 @@
-// For more information about this file see https://dove.feathersjs.com/guides/cli/authentication.html
 import { AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
 import { LocalStrategy } from '@feathersjs/authentication-local'
 
@@ -11,10 +10,10 @@ declare module './declarations' {
 }
 
 export const authentication = (app: Application) => {
-  const authentication = new AuthenticationService(app)
+  const service = new AuthenticationService(app)   // 👈 renamed
 
-  authentication.register('jwt', new JWTStrategy())
-  authentication.register('local', new LocalStrategy())
+  service.register('jwt', new JWTStrategy())
+  service.register('local', new LocalStrategy())
 
-  app.use('authentication', authentication)
+  app.use('/api/authentication', service as any)          // ✅ TS accepts this
 }

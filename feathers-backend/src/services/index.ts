@@ -9,6 +9,7 @@ import type { Application } from '../declarations'
 
 export const services = (app: Application) => {
   // Normal Feathers service registration
+  //app.configure(authentication)
   app.configure(displayConfig)
   app.configure(offers)
   app.configure(personaConfigChangelogs)
