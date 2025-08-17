@@ -5,10 +5,10 @@ import { personasConfig } from './personas-config/personas-config'
 import { changeLogs } from './changelogs/changelogs'
 import { playersData } from './players-data/players-data'
 import { user } from './users/users'
-// For more information about this file see https://dove.feathersjs.com/guides/cli/application.html#configure-functions
 import type { Application } from '../declarations'
 
 export const services = (app: Application) => {
+  // Normal Feathers service registration
   app.configure(displayConfig)
   app.configure(offers)
   app.configure(personaConfigChangelogs)
@@ -16,6 +16,16 @@ export const services = (app: Application) => {
   app.configure(changeLogs)
   app.configure(playersData)
   app.configure(user)
-  //dashboard(app)
-  // All services will be registered here
+
+  // 🔑 Re-mount them with `/api` prefix
+  Object.keys(app.services).forEach((path) => {
+  if (!path.startsWith('/api')) {
+    const service = app.service(path as keyof Application['services'])
+    if (service) {
+      // 👇 Cast fixes the overload issue
+      app.use(`/api${path}`, service as any)
+    }
+  }
+})
+
 }

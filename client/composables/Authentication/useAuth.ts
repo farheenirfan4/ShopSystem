@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useRuntimeConfig } from '#app'
 
-const apiUrl = 'https://shop-system-5ow7.vercel.app' // ✅ Use deployed API
+const apiUrl = 'https://shop-system-5ow7.vercel.app/api' // ✅ Use deployed API
 
 interface LoginResponse {
   accessToken: string
