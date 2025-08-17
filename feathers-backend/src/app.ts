@@ -5,7 +5,6 @@ import express, {
   rest,
   json,
   urlencoded,
-  cors,
   serveStatic,
   notFound,
   errorHandler
@@ -23,61 +22,27 @@ import { services } from './services/index'
 import { channels } from './channels'
 import { registerChangeLogListener } from './listeners/changeLogs.listener';
 
-// Define allowed origins for CORS
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000',
-  'https://shop-system-hafg.vercel.app'
-];
-
-// Corrected CORS options
-const corsOptions = {
-  origin: (origin: string | undefined, callback: any) => {
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization']
-};
-
 // Create the Feathers application singleton instance
 export const app: Application = express(feathers());
 
-// 💡 Corrected CORS and JSON/URL-encoded middleware order.
-// This is the correct order to ensure the CORS headers are handled
-// on all requests, especially the preflight OPTIONS request.
-app.use(cors(corsOptions));
+// 💡 JSON and URL-encoded middleware are kept to handle request bodies.
 app.use(json());
 app.use(urlencoded({ extended: true }));
 
-// --- REMOVED: Redundant manual OPTIONS handler ---
-// The `cors` middleware handles this automatically and correctly.
-// Your old code here was causing the problem by blocking the request
-// before the proper headers could be added.
-// app.use((req, res, next) => {
-//   if (req.method === 'OPTIONS') {
-//     res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
-//     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
-//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept')
-//     res.header('Access-Control-Allow-Credentials', 'true')
-//     return res.sendStatus(200)
-//   }
-//   next()
-// })
+// --- REMOVED: CORS-related code ---
+// CORS is now configured in vercel.json.
+// const allowedOrigins = [...];
+// const corsOptions = {...};
+// app.use(cors(corsOptions));
+// app.use((req, res, next) => { ... });
+// app.options('*', cors({ ... }));
 
 app.use((req, res, next) => {
   console.log('Incoming request:', req.method, req.url, req.headers.origin)
   next()
 });
 
-// Host the public folder
+// Host the public folder (only for local development)
 //app.use('/', serveStatic(app.get('public')))
 
 // Configure services and real-time functionality
@@ -88,7 +53,10 @@ app.configure(rest())
 app.configure(
   socketio({
     cors: {
-      origin: allowedOrigins,
+      origin: [
+        process.env.FRONTEND_URL || 'http://localhost:3000',
+        'https://shop-system-hafg.vercel.app'
+      ],
       credentials: true
     }
   })
