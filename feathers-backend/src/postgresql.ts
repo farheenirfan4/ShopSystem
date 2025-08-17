@@ -9,7 +9,7 @@ declare module './declarations' {
   }
 }
 
-export const postgresql = (app: Application) => {
+export const postgresql1 = (app: Application) => {
   const config = app.get('postgresql')
   const db = knex(config!)
 
@@ -19,7 +19,7 @@ export const postgresql = (app: Application) => {
 // For more information about this file see https://dove.feathersjs.com/guides/cli/databases.html
 
 
-export const postgresql1 = (app: Application) => {
+export const postgresql = (app: Application) => {
   const db = knex({
     client: 'pg',
     connection: {
