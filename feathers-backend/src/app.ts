@@ -44,7 +44,7 @@ const corsOptions = {
     }
   },
   credentials: true,
-  //optionsSuccessStatus: 200,
+  optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Best practice to include all methods
   allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'] // Also best practice
 };
