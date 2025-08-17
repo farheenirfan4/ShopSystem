@@ -22,6 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
+      console.log('[api/index.ts] OPTIONS preflight received from:', req.headers.origin); 
       console.log('[api/index.ts] Handling OPTIONS preflight');
       if (allowedOrigins.includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
