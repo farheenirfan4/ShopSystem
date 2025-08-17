@@ -18,7 +18,7 @@
       "header": {
         "typ": "access"
       },
-      "audience": "https://shop-system-5ow7.vercel.app/",
+      "audience": "https://shop-system-hafg.vercel.app/",
       "issuer": "feathers",
       "algorithm": "HS256",
       "expiresIn": "1d"

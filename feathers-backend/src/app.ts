@@ -1,10 +1,10 @@
-// src/app.ts
-
+// For more information about this file see https://dove.feathersjs.com/guides/cli/application.html
 import { feathers } from '@feathersjs/feathers'
 import express, {
   rest,
   json,
   urlencoded,
+  cors,
   serveStatic,
   notFound,
   errorHandler
@@ -21,42 +21,76 @@ import { authentication } from './authentication'
 import { services } from './services/index'
 import { channels } from './channels'
 import { registerChangeLogListener } from './listeners/changeLogs.listener';
+import { changeLogs } from './services/changelogs/changelogs'
 
-// Create the Feathers application singleton instance
-export const app: Application = express(feathers());
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  'https://shop-system-hafg.vercel.app'
+]
 
-// 💡 JSON and URL-encoded middleware are kept to handle request bodies.
-app.use(json());
-app.use(urlencoded({ extended: true }));
+// Corrected CORS options
+const corsOptions = {
+  // Use a function to dynamically check if the origin is allowed
+  origin: (origin: string | undefined, callback: any) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
 
-// --- REMOVED: CORS-related code ---
-// CORS is now configured in vercel.json.
-// const allowedOrigins = [...];
-// const corsOptions = {...};
-// app.use(cors(corsOptions));
-// app.use((req, res, next) => { ... });
-// app.options('*', cors({ ... }));
+    // Check if the incoming origin is in our allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // Best practice to include all methods
+  allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'] // Also best practice
+};
+
+const app: Application = express(feathers())
+/*app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept')
+    res.header('Access-Control-Allow-Credentials', 'true')
+if (req.method === 'OPTIONS') {
+    return res.sendStatus(200) // ✅ Force OK for preflight
+  } // ✅ Always respond OK to preflight
+  }
+  next()
+})
 
 app.use((req, res, next) => {
   console.log('Incoming request:', req.method, req.url, req.headers.origin)
   next()
-});
+})
+app.use(cors(corsOptions))
+app.options('*', cors({
+  origin: true,
+  credentials: true
+}))*/
 
-// Host the public folder (only for local development)
-//app.use('/', serveStatic(app.get('public')))
+// Load app configuration
+app.configure(configuration(configurationValidator))
+
+// IMPORTANT: Configure CORS here at the top, using your custom options.
+
+
+app.use(json())
+app.use(urlencoded({ extended: true }))
+
+// Host the public folder
+app.use('/', serveStatic(app.get('public')))
 
 // Configure services and real-time functionality
 app.configure(rest())
-
-// Feathers Socket.io requires a persistent connection, which is not supported on Vercel Serverless.
-// We will still keep this configuration for local development. Vercel will simply ignore it.
 app.configure(
   socketio({
     cors: {
-      origin: [
-        process.env.FRONTEND_URL || 'http://localhost:3000',
-        'https://shop-system-hafg.vercel.app'
-      ],
+      origin: allowedOrigins,
       credentials: true
     }
   })
@@ -87,3 +121,5 @@ app.hooks({
   setup: [],
   teardown: []
 })
+
+export { app }

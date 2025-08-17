@@ -9,6 +9,15 @@ let isAppSetup = false;
 // This is the main handler for the Vercel serverless function.
 export default async function (req: VercelRequest, res: VercelResponse) {
   try {
+
+    if (req.method === 'OPTIONS') {
+      res.setHeader('Access-Control-Allow-Origin', 'https://shop-system-hafg.vercel.app');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept, x-client-key, x-client-token, x-client-secret');
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Access-Control-Max-Age', '86400');
+      return res.status(204).end(); // Send a 204 No Content response for preflight
+    }
     // Only set up the Feathers app once per cold start.
     // This is the crucial step to ensure database connections and services are ready.
     if (!isAppSetup) {
