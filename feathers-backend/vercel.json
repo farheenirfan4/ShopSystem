@@ -1,16 +1,15 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api/$1" }
-  ],
-  "headers": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "https://shop-system-hafg.vercel.app" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,PATCH,DELETE,OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, Origin, X-Requested-With, Accept" },
-        { "key": "Access-Control-Allow-Credentials", "value": "true" }
-      ]
+      "src": "api/index.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.ts"
     }
   ]
 }
