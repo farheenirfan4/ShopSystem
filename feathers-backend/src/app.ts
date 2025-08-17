@@ -27,16 +27,13 @@ import { registerChangeLogListener } from './listeners/changeLogs.listener';
 const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'https://shop-system-hafg.vercel.app'
-]
+];
 
 // Corrected CORS options
 const corsOptions = {
-  // Use a function to dynamically check if the origin is allowed
   origin: (origin: string | undefined, callback: any) => {
-    // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
 
-    // Check if the incoming origin is in our allowed list
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
@@ -51,36 +48,34 @@ const corsOptions = {
 };
 
 // Create the Feathers application singleton instance
-// This is a singleton that can be imported using `{ app }`
-export const app: Application = express(feathers())
+export const app: Application = express(feathers());
 
-// Handle preflight requests
-app.use((req, res, next) => {
-  if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
-    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept')
-    res.header('Access-Control-Allow-Credentials', 'true')
-    return res.sendStatus(200)
-  }
-  next()
-})
+// 💡 Corrected CORS and JSON/URL-encoded middleware order.
+// This is the correct order to ensure the CORS headers are handled
+// on all requests, especially the preflight OPTIONS request.
+app.use(cors(corsOptions));
+app.use(json());
+app.use(urlencoded({ extended: true }));
+
+// --- REMOVED: Redundant manual OPTIONS handler ---
+// The `cors` middleware handles this automatically and correctly.
+// Your old code here was causing the problem by blocking the request
+// before the proper headers could be added.
+// app.use((req, res, next) => {
+//   if (req.method === 'OPTIONS') {
+//     res.header('Access-Control-Allow-Origin', req.headers.origin || '*')
+//     res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
+//     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With, Accept')
+//     res.header('Access-Control-Allow-Credentials', 'true')
+//     return res.sendStatus(200)
+//   }
+//   next()
+// })
 
 app.use((req, res, next) => {
   console.log('Incoming request:', req.method, req.url, req.headers.origin)
   next()
-})
-app.use(cors(corsOptions))
-app.options('*', cors({
-  origin: true,
-  credentials: true
-}))
-
-// Load app configuration
-app.configure(configuration(configurationValidator))
-
-app.use(json())
-app.use(urlencoded({ extended: true }))
+});
 
 // Host the public folder
 //app.use('/', serveStatic(app.get('public')))
