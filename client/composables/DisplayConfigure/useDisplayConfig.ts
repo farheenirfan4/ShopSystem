@@ -50,8 +50,8 @@ export const useDisplayConfigService = () => {
       })
       if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`)
       const json = await res.json()
-      displayConfigs.value = json.data
-      return json.data
+      displayConfigs.value = json
+      return json
     } catch (err: any) {
       error.value = err.message || 'Failed to fetch display config'
       return null
