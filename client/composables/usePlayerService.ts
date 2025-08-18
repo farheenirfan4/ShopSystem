@@ -27,7 +27,7 @@ export function usePlayerService() {
   const fetchData = async () => {
    loading.value = true
     try {
-      let url = `${config.public.apiUrl}?$includeCashDeposit=true`
+      let url = `${config.public.apiUrl}/players-data?$includeCashDeposit=true`
 
     
       
