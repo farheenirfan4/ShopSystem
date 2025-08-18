@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useRuntimeConfig } from '#app'
 
-const apiUrl = 'https://shop-system-5ow7.vercel.app/api' // ✅ Use deployed API
+const apiUrl = 'https://shop-system-5ow7.vercel.app/api'
 
 interface LoginResponse {
   accessToken: string
@@ -24,11 +24,11 @@ const loadUserFromStorage = () => {
   const savedUser = localStorage.getItem('user')
 
   if (savedToken && savedUser) {
-    console.log('[useAuth] Found saved user and token ✅')
+    console.log('[useAuth] Found saved user and token')
     token.value = savedToken
     user.value = JSON.parse(savedUser)
   } else {
-    console.log('[useAuth] No saved user/token found ❌')
+    console.log('[useAuth] No saved user/token found')
   }
 }
 

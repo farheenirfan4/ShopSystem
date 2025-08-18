@@ -34,7 +34,7 @@ const getHeaders = (isJSON = true) => {
   return headers;
 };
 
-// ✅ Fetch all users
+// Fetch all users
 const fetchUsers = async () => {
   isLoading.value = true;
   try {

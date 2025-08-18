@@ -18,15 +18,5 @@ export const services = (app: Application) => {
   app.configure(playersData)
   app.configure(user)
 
-  // 🔑 Re-mount them with `/api` prefix
-  Object.keys(app.services).forEach((path) => {
-  if (!path.startsWith('/api')) {
-    const service = app.service(path as keyof Application['services'])
-    if (service) {
-      // 👇 Cast fixes the overload issue
-      app.use(`/api${path}`, service as any)
-    }
-  }
-})
 
 }
