@@ -49,7 +49,7 @@ const allowedOrigins = [
   'https://shop-system-hafg.vercel.app'
 ]
 
-console.log('[app.ts] Initializing Feathers app.....')
+console.log('[app.ts] Initializing Feathers app..')
 
 const app: Application = express(feathers())
 
