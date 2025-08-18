@@ -540,7 +540,7 @@ onMounted(async () => {
       fetchDisplayConfig()
     ]);
 
-    //personaIds.value = getPersonaIds();
+    personaIds.value = getPersonaIds();
     displayConfigIds.value = getDisplayConfigIds();
   } catch (err) {
     console.error("Error fetching initial data:", err);

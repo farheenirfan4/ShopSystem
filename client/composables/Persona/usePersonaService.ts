@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useAuth } from '../Authentication/useAuth' // <-- to get token
 
+
+
 export interface PersonaConfig {
   id: number
   name: string
@@ -16,6 +18,7 @@ export interface PersonaConfig {
   updatedAt: string
 }
 
+//const API_URL = 'http://localhost:3030/personas-config'
 
 const forPayingUsers = ref<boolean>(false)
 const maxLevel = ref<number>(0)
@@ -26,18 +29,14 @@ const maxDeposits = ref<number>(0)
 const minDeposits = ref<number>(0)
 
 export function usePersonaService() {
-  const config = useRuntimeConfig();
   const { token, user } = useAuth()
+  const personasConfig = ref<PersonaConfig[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
   const notAuthorized = ref(false)
 
-  /**
-   * Fetches the list of personas from the API.
-   * This function is now stateless, it returns the data and does not
-   * manage an internal `personasConfig` ref.
-   */
   const fetchPersonasConfig = async () => {
+    const config = useRuntimeConfig();
     loading.value = true
     error.value = null
     notAuthorized.value = false
@@ -60,12 +59,10 @@ export function usePersonaService() {
           Authorization: `Bearer ${token.value}`
         }
       })
-      if (!res.ok) {
-        throw new Error(`Failed to fetch: ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`)
       const json = await res.json()
-      // Return the data directly to the caller (e.g., `useAsyncData`)
-      return json.data
+      personasConfig.value = json
+      return json
     } catch (err: any) {
       error.value = err.message || 'Failed to fetch personas config'
       return null
@@ -74,8 +71,8 @@ export function usePersonaService() {
     }
   }
 
-  
   const createPersona = async (payload: Omit<PersonaConfig, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const config = useRuntimeConfig();
     loading.value = true
     error.value = null
 
@@ -101,11 +98,11 @@ export function usePersonaService() {
         body: JSON.stringify(payload)
       })
 
-      if (!res.ok) {
-        throw new Error(`Failed to create persona: ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(`Failed to create persona: ${res.statusText}`)
       const newPersona: PersonaConfig = await res.json()
 
+      // Update local state
+      personasConfig.value.push(newPersona)
       return newPersona
     } catch (err: any) {
       error.value = err.message || 'Failed to create persona'
@@ -115,67 +112,108 @@ export function usePersonaService() {
     }
   }
 
+  const loadPersonaDetails = (personaId: string | number) => {
+    const config = useRuntimeConfig();
+    const persona = personasConfig.value.find(p => p.id === personaId || (p as any)._id === personaId)
 
-  const updatePersona = async (
-    personaId: number | string,
-    payload: Partial<Omit<PersonaConfig, 'id' | 'createdAt' | 'updatedAt'>>
-  ) => {
-    loading.value = true
-    error.value = null
-
-    if (!token.value) {
-      error.value = 'Not logged in'
-      loading.value = false
+    if (!persona) {
+      error.value = `Persona with ID ${personaId} not found`
       return null
     }
 
-    if (!user.value?.roles?.includes('admin')) {
-      notAuthorized.value = true
-      loading.value = false
-      return null
-    }
+    forPayingUsers.value = Boolean(persona.forPayingUsers)
+    maxLevel.value = Number(persona.maxLevel || 0)
+    minLevel.value = Number(persona.minLevel || 0)
+    maxMmr.value = Number(persona.maxMmr || 0)
+    minMmr.value = Number(persona.minMmr || 0)
+    maxDeposits.value = Number(persona.maxDeposits || 0)
+    minDeposits.value = Number(persona.minDeposits || 0)
 
-    try {
-      const res = await fetch(`${config.public.apiUrl}/personas-config/${personaId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token.value}`
-        },
-        body: JSON.stringify(payload)
-      })
-
-      if (!res.ok) {
-        throw new Error(`Failed to update persona: ${res.statusText}`);
-      }
-
-      const updatedPersona: PersonaConfig = await res.json()
-      return updatedPersona
-    } catch (err: any) {
-      error.value = err.message || 'Failed to update persona'
-      return null
-    } finally {
-      loading.value = false
+    return {
+      forPayingUsers: forPayingUsers.value,
+      maxLevel: maxLevel.value,
+      minLevel: minLevel.value,
+      maxMmr: maxMmr.value,
+      minMmr: minMmr.value,
+      maxDeposits: maxDeposits.value,
+      minDeposits: minDeposits.value
     }
   }
+  
+  const updatePersona = async (
+  personaId: number | string,
+  payload: Partial<Omit<PersonaConfig, 'id' | 'createdAt' | 'updatedAt'>>
+) => {
+  const config = useRuntimeConfig();
+  loading.value = true
+  error.value = null
 
-  
-  const getPersonaIds = (personas: PersonaConfig[] | null) => {
-    if (!personas) return [];
-    return personas
-      .map(p => p.id ?? (p as any)._id)
-      .filter((id): id is number => id !== undefined && id !== null);
-  };
-  
-  
+  if (!token.value) {
+    error.value = 'Not logged in'
+    loading.value = false
+    return null
+  }
+
+  if (!user.value?.roles?.includes('admin')) {
+    notAuthorized.value = true
+    loading.value = false
+    return null
+  }
+
+  try {
+    const res = await fetch(`${config.public.apiUrl}/personas-config/${personaId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token.value}`
+      },
+      body: JSON.stringify(payload)
+    })
+
+    if (!res.ok) throw new Error(`Failed to update persona: ${res.statusText}`)
+
+    const updatedPersona: PersonaConfig = await res.json()
+
+    // Update local state
+    const index = personasConfig.value.findIndex(p => p.id === updatedPersona.id)
+    if (index !== -1) {
+      personasConfig.value[index] = updatedPersona
+    }
+
+    return updatedPersona
+  } catch (err: any) {
+    error.value = err.message || 'Failed to update persona'
+    return null
+  } finally {
+    loading.value = false
+  }
+}
+
+const getPersonaIds = () => {
+
+  // Ensures we only return numbers/strings, no undefined/null
+  return personasConfig.value
+    .map(p => p.id ?? (p as any)._id) // Support both `id` and `_id`
+    .filter((id): id is number => id !== undefined && id !== null);
+};
+
 
   return {
+    //personasConfig,
     loading,
     error,
     notAuthorized,
     fetchPersonasConfig,
     createPersona,
+    forPayingUsers,
+    maxLevel,
+    minLevel,
+    maxMmr,
+    minMmr,
+    maxDeposits,
+    minDeposits,
+    loadPersonaDetails,
     updatePersona,
-    getPersonaIds
+    getPersonaIds 
   }
 }
