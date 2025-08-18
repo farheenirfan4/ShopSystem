@@ -134,6 +134,6 @@ const handleLogin = async () => {
   background-image: url("../assets/images/misc/signInScreenImage1.jpg");
   background-size: cover;
   background-position: center;
-  border-radius: 30px;
+  border-radius: 30px 0 0 30px;
 }
 </style>
