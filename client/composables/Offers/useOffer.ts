@@ -2,7 +2,7 @@ import { ref } from "vue"
 import { offersSchema, type Offer } from "../../schemas/offerSchema"
 import { useAuth } from "../Authentication/useAuth" // <-- get token from here
 
-const config = useRuntimeConfig();
+
 
 // Setup AJV
 
@@ -25,6 +25,7 @@ export function useOffers() {
 
   // 1️⃣ Retrieve all offers
   const fetchOffers = async () => {
+    const config = useRuntimeConfig();
     loading.value = true
     error.value = null
     try {
@@ -45,7 +46,9 @@ export function useOffers() {
   // 2️⃣ Add offer
   const addOffer = async (newOffer: Partial<Offer>) => {
     try {
-      //validateBeforeSend(newOffer)
+      const config = useRuntimeConfig();
+      //validateBeforeSend(n
+      // ewOffer)
       const res = await fetch(`${config.public.apiUrl}/offers`, {
         method: "POST",
         headers: getHeaders(),
@@ -62,6 +65,7 @@ export function useOffers() {
 
   // 3️⃣ Update offer
   const updateOffer = async (id: string, updatedOffer: Offer) => {
+    const config = useRuntimeConfig();
     try {
       //validateBeforeSend(updatedOffer)
       const res = await fetch(`${config.public.apiUrl}/offers/${id}`, {
@@ -81,6 +85,7 @@ export function useOffers() {
 
   // 4️⃣ Delete offer
   const deleteOffer = async (id: string) => {
+    const config = useRuntimeConfig();
     try {
       const res = await fetch(`${config.public.apiUrl}/offers/${id}`, {
         method: "DELETE",
