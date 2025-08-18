@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useAuth } from '../Authentication/useAuth' // <-- to get token
 
-const config = useRuntimeConfig();
+
 
 export interface PersonaConfig {
   id: number
@@ -36,6 +36,7 @@ export function usePersonaService() {
   const notAuthorized = ref(false)
 
   const fetchPersonasConfig = async () => {
+    const config = useRuntimeConfig();
     loading.value = true
     error.value = null
     notAuthorized.value = false
@@ -71,6 +72,7 @@ export function usePersonaService() {
   }
 
   const createPersona = async (payload: Omit<PersonaConfig, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const config = useRuntimeConfig();
     loading.value = true
     error.value = null
 
@@ -111,6 +113,7 @@ export function usePersonaService() {
   }
 
   const loadPersonaDetails = (personaId: string | number) => {
+    const config = useRuntimeConfig();
     const persona = personasConfig.value.find(p => p.id === personaId || (p as any)._id === personaId)
 
     if (!persona) {
@@ -141,6 +144,7 @@ export function usePersonaService() {
   personaId: number | string,
   payload: Partial<Omit<PersonaConfig, 'id' | 'createdAt' | 'updatedAt'>>
 ) => {
+  const config = useRuntimeConfig();
   loading.value = true
   error.value = null
 
@@ -186,6 +190,7 @@ export function usePersonaService() {
 }
 
 const getPersonaIds = () => {
+  
   // Ensures we only return numbers/strings, no undefined/null
   return personasConfig.value
     .map(p => p.id ?? (p as any)._id) // Support both `id` and `_id`
