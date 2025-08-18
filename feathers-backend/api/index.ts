@@ -23,10 +23,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Strip `/api` prefix so Feathers routes match
-    //if (req.url?.startsWith('/api')) {
-      //req.url = req.url.replace(/^\/api/, '') || '/';
-      //console.log('[api/index.ts] Stripped /api prefix →', req.url);
-   // }
+    if (req.url && req.url.startsWith('/api/') && !req.url.startsWith('/api/authentication')) {
+      req.url = req.url.replace(/^\/api/, '') || '/';
+      console.log('[api/index.ts] Stripped /api prefix →', req.url);
+    }
 
     console.log('[api/index.ts] Passing request to Feathers app.handle()');
     (app as any).handle(req, res);
