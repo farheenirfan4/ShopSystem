@@ -6,7 +6,7 @@ import { usePersonaService, type PersonaConfig } from '~/composables/Persona/use
 import { usePersonaValidator } from '~/composables/validators/usePersonaValidator'
 
 const router = useRouter()
-const { personasConfig, loading, error, notAuthorized, fetchPersonasConfig, createPersona, updatePersona } = usePersonaService()
+const { loading, error, notAuthorized, fetchPersonasConfig, createPersona, updatePersona } = usePersonaService()
 const { user, token } = useAuth()
 const { validatePersonaForm } = usePersonaValidator()
 
@@ -96,13 +96,19 @@ const submitForm = async () => {
 }
 
 // ✅ Fetch data with SSR support
-await useAsyncData('personas', async () => {
-  await fetchPersonasConfig()
-  if (error.value === 'Not logged in') {
-    router.push('/login')
+const { data: personasConfig, pending: isFetching } = await useAsyncData('personas', async () => {
+  try {
+    const result = await fetchPersonasConfig();
+    if (error.value === 'Not logged in') {
+      router.push('/login');
+      return null;
+    }
+    return result;
+  } catch (e) {
+    console.error('Error during initial data fetch:', e);
+    return null;
   }
-  return personasConfig.value
-})
+});
 </script>
 
 <template>
@@ -127,7 +133,7 @@ await useAsyncData('personas', async () => {
           You are not authorized to view this page.
         </VAlert>
 
-        <VTable v-if="!loading && !error && !notAuthorized">
+        <VTable v-if="!isFetching && !error && !notAuthorized && personasConfig?.length > 0">
           <thead>
             <tr>
               <th>ID</th>
