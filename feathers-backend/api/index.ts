@@ -12,7 +12,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   console.log('[api/index.ts] isAppSetup:', isAppSetup);
 
   try {
-    // Cold start → setup Feathers app once
+    
     if (!isAppSetup) {
       console.log('[api/index.ts] Cold start detected → running app.setup()');
       await app.setup();
@@ -22,7 +22,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.log('[api/index.ts] Warm start → app.setup() skipped');
     }
 
-    // Hand over ALL requests (including OPTIONS) to Feathers
+    // Strip `/api` prefix so Feathers routes match
+    if (req.url?.startsWith('/api')) {
+      req.url = req.url.replace(/^\/api/, '') || '/';
+      console.log('[api/index.ts] Stripped /api prefix →', req.url);
+    }
+
     console.log('[api/index.ts] Passing request to Feathers app.handle()');
     (app as any).handle(req, res);
 
@@ -37,5 +42,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       errors: {}
     });
   }
-  
 }
