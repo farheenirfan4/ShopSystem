@@ -22,7 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.log('[api/index.ts] Warm start → app.setup() skipped');
     }
 
-    // Strip `/api` prefix so Feathers routes match
+    // Strip `/api` prefix so Feathers routes match except authentication
     if (req.url && req.url.startsWith('/api/') && !req.url.startsWith('/api/authentication')) {
       req.url = req.url.replace(/^\/api/, '') || '/';
       console.log('[api/index.ts] Stripped /api prefix →', req.url);
