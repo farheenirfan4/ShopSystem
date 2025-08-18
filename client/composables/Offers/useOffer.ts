@@ -20,7 +20,7 @@ export function useOffers() {
 
   const getHeaders = () => ({
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token.value}`, // ✅ always include token
+    Authorization: `Bearer ${token.value}`, 
   })
 
   // 1️⃣ Retrieve all offers

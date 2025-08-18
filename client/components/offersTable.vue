@@ -539,16 +539,13 @@ onMounted(async () => {
       fetchPersonasConfig(),
       fetchDisplayConfig()
     ]);
+
+    personaIds.value = getPersonaIds();
+    displayConfigIds.value = getDisplayConfigIds();
   } catch (err) {
     console.error("Error fetching initial data:", err);
     snackbar.value = { show: true, text: 'Error fetching initial data. Please check the console.', color: 'red', timeout: 3000 };
   }
-
-
-  personaIds.value = getPersonaIds();
-  displayConfigIds.value = getDisplayConfigIds();
-
-  // Polling for offers
   let updateInterval = setInterval(fetchOffers, 30000); // Poll every 60 seconds
   onBeforeUnmount(() => clearInterval(updateInterval));
 

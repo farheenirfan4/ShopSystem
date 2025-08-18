@@ -55,7 +55,7 @@ const fetchUsers = async () => {
 
 
 
-// ✅ Create a new user
+//  Create a new user
 const createUser = async (newUser: { username: string; email: string; password: string; roles?: string[] }) => {
   try {
     const res = await fetch(`${config.public.apiUrl}/users`, {
@@ -71,7 +71,7 @@ const createUser = async (newUser: { username: string; email: string; password: 
   }
 };
 
-// ✅ Update an existing user
+//  Update an existing user
 const updateUser = async (id: string, updates: Partial<{ username: string; email: string; roles?: string[] }>) => {
   try {
     const res = await fetch(`${config.public.apiUrl}/users/${id}`, {
@@ -88,7 +88,7 @@ const updateUser = async (id: string, updates: Partial<{ username: string; email
   }
 };
 
-// ✅ Delete a user
+//  Delete a user
 const deleteUser = async (id: string) => {
   try {
     const res = await fetch(`${config.public.apiUrl}/users/${id}`, {
