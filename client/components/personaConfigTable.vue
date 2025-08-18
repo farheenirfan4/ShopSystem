@@ -89,14 +89,14 @@ const submitForm = async () => {
   }
 
   if (persona) {
-    await fetchPersonasConfig()
+   await refresh()
     dialogVisible.value = false
     resetForm()
   }
 }
 
 // ✅ Fetch data with SSR support
-const { data: personasConfig, pending: isFetching } = await useAsyncData('personas', async () => {
+const { data: personasConfig, pending: isFetching, refresh } = await useAsyncData('personas', async () => {
   try {
     const result = await fetchPersonasConfig();
     if (error.value === 'Not logged in') {
