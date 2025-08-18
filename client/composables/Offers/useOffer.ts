@@ -34,7 +34,7 @@ export function useOffers() {
       })
       if (!res.ok) throw new Error(`Failed to fetch offers: ${res.statusText}`)
         const json = await res.json()
-        offers.value = json.data || []
+        offers.value = json || []
       //offers.value = await res.json()
     } catch (err: any) {
       error.value = err.message
