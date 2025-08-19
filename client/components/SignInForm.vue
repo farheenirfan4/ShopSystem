@@ -10,6 +10,7 @@ const email = ref('')
 const password = ref('')
 const errors = ref<ErrorObject[]>([])
 const isPasswordVisible = ref(false)
+const isLoading = ref(false)
 
 const router = useRouter()
 const { login, error } = useAuth()
@@ -34,11 +35,15 @@ const handleLogin = async () => {
   }
 
   errors.value = []
+  isLoading.value = true
   try {
     await login(email.value, password.value)
     router.push('/dashboard')
   } catch {
     // error is already set by useAuth
+  }
+  finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -108,6 +113,8 @@ const handleLogin = async () => {
               block
               class="mt-6"
               color="primary"
+              :loading="isLoading"
+              :disabled="isLoading"
               @click="handleLogin"
             >
               Sign In

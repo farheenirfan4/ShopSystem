@@ -49,38 +49,38 @@ const allowedOrigins = [
   'https://shop-system-hafg.vercel.app'
 ]
 
-console.log('[app.ts] Initializing Feathers app..')
+//console.log('[app.ts] Initializing Feathers app..')
 
 const app: Application = express(feathers())
 
 // --- CORS ---
-console.log('[app.ts] Configuring CORS with allowed origins:', allowedOrigins)
+//console.log('[app.ts] Configuring CORS with allowed origins:', allowedOrigins)
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }))
 
 // --- Incoming request logger ---
 app.use((req, res, next) => {
-  console.log('[app.ts] Incoming request:', req.method, req.url, 'Origin:', req.headers.origin)
+  //console.log('[app.ts] Incoming request:', req.method, req.url, 'Origin:', req.headers.origin)
   next()
 })
 
 // --- Load app configuration ---
-console.log('[app.ts] Loading configuration...')
+//console.log('[app.ts] Loading configuration...')
 app.configure(configuration(configurationValidator))
 
 // --- Body parsers ---
-console.log('[app.ts] Configuring body parsers (json + urlencoded)')
+//console.log('[app.ts] Configuring body parsers (json + urlencoded)')
 app.use(json())
 app.use(urlencoded({ extended: true }))
 
 // --- Public folder ---
-console.log('[app.ts] Serving static files from:', app.get('public'))
+//console.log('[app.ts] Serving static files from:', app.get('public'))
 //app.use('/', serveStatic(app.get('public')))
 
 // --- REST + Socket.io ---
-console.log('[app.ts] Configuring REST transport...')
+//console.log('[app.ts] Configuring REST transport...')
 app.configure(rest())
 
-console.log('[app.ts] Configuring Socket.io with allowed origins...')
+//console.log('[app.ts] Configuring Socket.io with allowed origins...')
 app.configure(
   socketio({
     cors: {
@@ -91,32 +91,32 @@ app.configure(
 )
 
 // --- Database ---
-console.log('[app.ts] Setting up PostgreSQL...')
+//console.log('[app.ts] Setting up PostgreSQL...')
 app.configure(postgresql)
 
 // --- Authentication ---
-console.log('[app.ts] Setting up authentication...')
+//console.log('[app.ts] Setting up authentication...')
 app.configure(authentication)
 
 // --- Services ---
-console.log('[app.ts] Registering services...')
+//console.log('[app.ts] Registering services...')
 app.configure(services)
 
 // --- Channels ---
-console.log('[app.ts] Configuring channels...')
+//console.log('[app.ts] Configuring channels...')
 app.configure(channels)
 
 // --- Error + 404 handlers ---
-console.log('[app.ts] Registering notFound + errorHandler middlewares...')
+//console.log('[app.ts] Registering notFound + errorHandler middlewares...')
 app.use(notFound())
 app.use(errorHandler({ logger }))
 
 // --- ChangeLog Listener ---
-console.log('[app.ts] Registering changeLog listener...')
+//console.log('[app.ts] Registering changeLog listener...')
 registerChangeLogListener(app)
 
 // --- Global hooks ---
-console.log('[app.ts] Registering global hooks...')
+//console.log('[app.ts] Registering global hooks...')
 app.hooks({
   around: {
     all: [logError]
@@ -127,7 +127,7 @@ app.hooks({
 })
 
 // --- Lifecycle hooks ---
-console.log('[app.ts] Registering setup & teardown hooks...')
+//console.log('[app.ts] Registering setup & teardown hooks...')
 app.hooks({
   setup: [
     async () => {
@@ -136,7 +136,7 @@ app.hooks({
   ],
   teardown: [
     async () => {
-      console.log('[app.ts] 🛑 App teardown hook running...')
+      //console.log('[app.ts] 🛑 App teardown hook running...')
     }
   ]
 })
@@ -144,10 +144,10 @@ app.hooks({
 if (!app.get('authentication')) {
   
   app.set('authentication', productionConfig.authentication);
-  console.log('[Authentication] Default authentication configuration set');
+  //console.log('[Authentication] Default authentication configuration set');
 }
 
-console.log('[app.ts] Feathers app initialized ✅')
+//console.log('[app.ts] Feathers app initialized ')
 
 
 export { app }
