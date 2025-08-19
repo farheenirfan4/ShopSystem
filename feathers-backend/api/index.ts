@@ -27,11 +27,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.url && req.url.startsWith('/api/') && !req.url.startsWith('/api/authentication')) {
       const urlObject = new URL(req.url, `http://${req.headers.host}`);
       urlObject.pathname = urlObject.pathname.replace(/^\/api/, '');
-      req.url = urlObject.toString().replace(`http://${req.headers.host}`, '');
-      
+      req.url = urlObject.pathname + urlObject.search;
       console.log('[api/index.ts] Stripped /api prefix →', req.url);
+
+      const searchParams = Object.fromEntries(urlObject.searchParams.entries());
+      req.query = searchParams;
+
+      console.log('[api/index.ts] Stripped /api prefix →', req.url);
+      console.log('[api/index.ts] Parsed query →', req.query);
     }
     
+
+    
+
+  //console.log('[api/index.ts] Stripped /api prefix →', req.url);
+  //console.log('[api/index.ts] Parsed query →', req.query);
     console.log('[api/index.ts] Passing request to Feathers app.handle()');
     (app as any).handle(req, res);
     console.log('[api/index.ts] Full URL:', req.url);
