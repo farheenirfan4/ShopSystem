@@ -86,6 +86,7 @@ if (query?.$includeCashDeposit) {
     const isPayingUserValue = query.$isPaying;
     knexQuery = knexQuery
         .andWhereRaw(`metadata->'UserPaymentInfo' @> ?`, [`{"IsPaying": ${isPayingUserValue}}`]);
+        console.log('Knex query:', knexQuery.toQuery());
     delete query.$isPaying;
 }
 
@@ -95,6 +96,8 @@ if (query?.$levelRange) {
         .whereRaw(`(metadata->'CareerProgressData'->>'Level')::INT >= ?`, [min])
         .andWhereRaw(`(metadata->'CareerProgressData'->>'Level')::INT <= ?`, [max])
         .andWhereRaw(`(metadata->>'IsBotUser') = 'false'`);
+
+        console.log('Knex query:', knexQuery.toQuery());
     delete query.$levelRange;
 }
 
@@ -119,6 +122,7 @@ if (query?.$totalDeposit) {
                 `CAST(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit' AS numeric) <= ?`, 
                 [max]
             );
+            console.log('Knex query:', knexQuery.toQuery());
         delete query.$totalDeposit;
     }
 }
@@ -130,6 +134,7 @@ if (query?.$Mmr) {
             .andWhere('p.key', 'PlayerRatingData')
             .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) >= ?`, [min])
 .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) <= ?`, [max]);
+console.log('Knex query:', knexQuery.toQuery());
         delete query.$Mmr;
     }
 
@@ -164,6 +169,7 @@ if (query?.$Mmr) {
 
   if ($limit !== undefined) knexQuery.limit($limit)
   if ($skip !== undefined) knexQuery.offset($skip)
+    console.log('Final knex SQL:', knexQuery.toQuery());
 
   const data = await knexQuery
   const total = await knex('users').count('* as count').first()
