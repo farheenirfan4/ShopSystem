@@ -15,7 +15,7 @@ export const primaryDb1 = knex({
 export const primaryDb = knex({
   client: "pg",
   connection: {
-    connectionString: process.env.NEON_DB1_URL, // your first Neon DB
+    connectionString: process.env.NEON_DB1_URL,
     ssl: { rejectUnauthorized: false }
   }
 });
