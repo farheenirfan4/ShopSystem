@@ -1,6 +1,7 @@
 // api/index.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { app } from '../src/app';
+import { URL } from 'url';
 
 // Track cold start vs warm start
 let isAppSetup = false;
@@ -22,18 +23,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.log('[api/index.ts] Warm start → app.setup() skipped');
     }
 
-    // Strip `/api` prefix so Feathers routes match except authentication
+    // Preserve the query string when stripping the /api prefix
     if (req.url && req.url.startsWith('/api/') && !req.url.startsWith('/api/authentication')) {
-      req.url = req.url.replace(/^\/api/, '') || '/';
+      const urlObject = new URL(req.url, `http://${req.headers.host}`);
+      urlObject.pathname = urlObject.pathname.replace(/^\/api/, '');
+      req.url = urlObject.toString().replace(`http://${req.headers.host}`, '');
+      
       console.log('[api/index.ts] Stripped /api prefix →', req.url);
     }
-
     
-
     console.log('[api/index.ts] Passing request to Feathers app.handle()');
     (app as any).handle(req, res);
     console.log('[api/index.ts] Full URL:', req.url);
-
 
   } catch (error: any) {
     console.error('[api/index.ts] Error occurred ❌', error);

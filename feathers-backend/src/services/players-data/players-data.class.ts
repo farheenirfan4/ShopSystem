@@ -32,6 +32,8 @@ async find(
 async find(
   params: PlayersDataParams
 ): Promise<any> {
+
+  console.log('Incoming find params:', JSON.stringify(params, null, 2));
   const { query } = params
 
   const knex: Knex = this.getModel(params)
