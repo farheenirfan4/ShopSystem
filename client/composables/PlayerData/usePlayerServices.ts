@@ -58,8 +58,11 @@ export const fetchFilteredUsers = async (personaId: number) => {
   }
 
   // Condition for $Mmr
-  queryParams.append('Mmr[$gte]', minMmr.value.toString());
-queryParams.append('Mmr[$lte]', maxMmr.value.toString());
+  if (minMmr.value !== null && maxMmr.value !== null && maxMmr.value !== 0) {
+    queryParams.append('$Mmr[min]', minMmr.value.toString());
+    queryParams.append('$Mmr[max]', maxMmr.value.toString());
+  }
+  
   // Construct the final URL
   const fullUrl = `${config.public.apiUrl}/players-data?${queryParams.toString()}`;
 

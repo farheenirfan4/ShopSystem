@@ -28,8 +28,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.log('[api/index.ts] Stripped /api prefix →', req.url);
     }
 
+    
+
     console.log('[api/index.ts] Passing request to Feathers app.handle()');
     (app as any).handle(req, res);
+    console.log('[api/index.ts] Full URL:', req.url);
+
 
   } catch (error: any) {
     console.error('[api/index.ts] Error occurred ❌', error);
