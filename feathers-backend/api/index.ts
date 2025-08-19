@@ -25,18 +25,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Preserve the query string when stripping the /api prefix
     if (req.url && req.url.startsWith('/api/') && !req.url.startsWith('/api/authentication')) {
-      const urlObject = new URL(req.url, `http://${req.headers.host}`);
-      urlObject.pathname = urlObject.pathname.replace(/^\/api/, '');
-      req.url = urlObject.pathname + urlObject.search;
-      console.log('[api/index.ts] Stripped /api prefix →', req.url);
+  const urlObject = new URL(req.url, `http://${req.headers.host}`);
+  urlObject.pathname = urlObject.pathname.replace(/^\/api/, '');
+  req.url = urlObject.pathname + urlObject.search; // keep path + query
 
-      const searchParams = Object.fromEntries(urlObject.searchParams.entries());
-      req.query = searchParams;
+  // --- START: Parse and transform query parameters ---
+  const rawQuery = Object.fromEntries(urlObject.searchParams.entries());
 
-      console.log('[api/index.ts] Stripped /api prefix →', req.url);
-      console.log('[api/index.ts] Parsed query →', req.query);
+  const query: Record<string, any> = {};
+
+  for (const key in rawQuery) {
+    const value = rawQuery[key];
+
+    // Convert boolean strings
+    if (value === 'true') query[key] = true;
+    else if (value === 'false') query[key] = false;
+    // Convert numeric strings
+    else if (!isNaN(Number(value))) query[key] = Number(value);
+    else query[key] = value;
+
+    // Handle range operators like $Mmr[min] and $Mmr[max]
+    const rangeMatch = key.match(/^\$(\w+)\[(min|max)\]$/);
+    if (rangeMatch) {
+      const field = rangeMatch[1];
+      const operator = rangeMatch[2] === 'min' ? '$gte' : '$lte';
+      query[field] = query[field] || {};
+      query[field][operator] = Number(value);
+      delete query[key]; // remove old key
     }
-    
+  }
+
+  req.query = query;
+  console.log('[api/index.ts] Parsed & transformed query →', req.query);
+  // --- END ---
+}
 
     
 
