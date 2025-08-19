@@ -72,9 +72,6 @@ if (query?.$includeCashDeposit) {
   //);
   
 }
-
-
-
    if (query?.$levelRange50to100) { 
     knexQuery = knexQuery
       .whereRaw(`(metadata->'CareerProgressData'->>'Level')::INT > ?`, [50])
@@ -82,8 +79,6 @@ if (query?.$includeCashDeposit) {
     
     delete query.$levelRange50to100;
   }
-
-  
 
   if (query?.$isPaying !== undefined) {
     const isPayingUserValue = query.$isPaying;
@@ -124,9 +119,9 @@ if (query?.$totalDeposit) {
             );
         delete query.$totalDeposit;
     }
+}
 
-    
-    if (query?.$Mmr) {
+if (query?.$Mmr) {
         const { min, max } = query.$Mmr;
         knexQuery = knexQuery
             .where('p.collection', 'Progress')
@@ -135,7 +130,6 @@ if (query?.$totalDeposit) {
 .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) <= ?`, [max]);
         delete query.$Mmr;
     }
-}
 
   if (query?.$count) {
     const result = await knexQuery.count('* as count').first() as Record<string, string | number> | undefined;
