@@ -57,87 +57,42 @@ async find(
 
    let knexQuery = knex('users as u')
   .select('u.username', 'u.id');
-  
 
-if (query?.$includeCashDeposit) {
-
-  knexQuery = knex('storage as p')
-  .join('users as u', 'p.user_id', 'u.id')
-  .select(
-    knex.raw(`p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit' AS deposit_amount`),
-    'u.*'
-  )
-  .where('p.collection', 'UserState')
-  .andWhere('p.key', 'UserStats')
-  //.andWhereRaw(
-    //`(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit')::numeric`
-  //);
-  
-}
-   if (query?.$levelRange50to100) { 
-    knexQuery = knexQuery
-      .whereRaw(`(metadata->'CareerProgressData'->>'Level')::INT > ?`, [50])
-      .andWhereRaw(`(metadata->'CareerProgressData'->>'Level')::INT < ?`, [100]);
-    
-    delete query.$levelRange50to100;
-  }
-
-  if (query?.$isPaying !== undefined) {
-    const isPayingUserValue = query.$isPaying;
-    knexQuery = knexQuery
-        .andWhereRaw(`metadata->'UserPaymentInfo' @> ?`, [`{"IsPaying": ${isPayingUserValue}}`]);
-        console.log('Knex query:', knexQuery.toQuery());
-    delete query.$isPaying;
+if (query?.$includeCashDeposit || query?.$totalDeposit) {
+  knexQuery = knexQuery.join('storage as p', 'p.user_id', 'u.id');
 }
 
+// $isPaying filter
+if (query?.$isPaying !== undefined) {
+  knexQuery = knexQuery.andWhereRaw(`metadata->'UserPaymentInfo' @> ?`, [`{"IsPaying": ${query.$isPaying}}`]);
+}
+
+// $levelRange filter
 if (query?.$levelRange) {
-    const { min, max } = query.$levelRange;
-    knexQuery = knexQuery
-        .whereRaw(`(metadata->'CareerProgressData'->>'Level')::INT >= ?`, [min])
-        .andWhereRaw(`(metadata->'CareerProgressData'->>'Level')::INT <= ?`, [max])
-        .andWhereRaw(`(metadata->>'IsBotUser') = 'false'`);
-
-        console.log('Knex query:', knexQuery.toQuery());
-    delete query.$levelRange;
+  const { min, max } = query.$levelRange;
+  knexQuery = knexQuery
+    .whereRaw(`(metadata->'CareerProgressData'->>'Level')::INT >= ?`, [min])
+    .andWhereRaw(`(metadata->'CareerProgressData'->>'Level')::INT <= ?`, [max]);
 }
 
-
+// $totalDeposit filter
 if (query?.$totalDeposit) {
-    
-    knexQuery = knexQuery
-        .from('storage as p')
-        .join('users as u', 'p.user_id', 'u.id');
-    
-    
-    if (query?.$totalDeposit) {
-        const { min, max } = query.$totalDeposit;
-        knexQuery = knexQuery
-            .where('p.collection', 'UserState')
-            .andWhere('p.key', 'UserStats')
-            .andWhereRaw(
-                `CAST(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit' AS numeric) >= ?`, 
-                [min]
-            )
-            .andWhereRaw(
-                `CAST(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit' AS numeric) <= ?`, 
-                [max]
-            );
-            console.log('Knex query:', knexQuery.toQuery());
-        delete query.$totalDeposit;
-    }
+  const { min, max } = query.$totalDeposit;
+  knexQuery = knexQuery
+    .where('p.collection', 'UserState')
+    .andWhere('p.key', 'UserStats')
+    .andWhereRaw(`CAST(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit' AS numeric) >= ?`, [min])
+    .andWhereRaw(`CAST(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit' AS numeric) <= ?`, [max]);
 }
 
+// $Mmr filter
 if (query?.$Mmr) {
   const { min, max } = query.$Mmr;
-
   knexQuery = knexQuery
-    .join('storage as p', 'p.user_id', 'u.id')
     .where('p.collection', 'Progress')
     .andWhere('p.key', 'PlayerRatingData')
     .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) >= ?`, [min])
     .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) <= ?`, [max]);
-
-  delete query.$Mmr;
 }
 
   if (query?.$count) {
