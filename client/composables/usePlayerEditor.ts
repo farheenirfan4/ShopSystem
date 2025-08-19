@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useAuthFetch } from './useAuthFetch'
 import type { Player } from '../types/players'
 import { useAuth } from './useAuth'
-const config = useRuntimeConfig();
+
 
 export function usePlayerEditor(fetchData: () => Promise<void>) {
   const editDialog = ref(false)
@@ -99,6 +99,7 @@ export function usePlayerEditor(fetchData: () => Promise<void>) {
   }
 
   const sendPatchRequest = async (playerId: string, payload: any) => {
+    const config = useRuntimeConfig();
     await useAuthFetch(`${config.public.apiUrl}/players-data/${playerId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },

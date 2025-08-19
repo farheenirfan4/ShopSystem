@@ -13,9 +13,10 @@ export function useChangeLogService() {
   const searchUsername = ref('')
   const debouncedFetchData = debounce(() => fetchChangeLogData(), 300)
 
-  const config = useRuntimeConfig();
+  
 
   const fetchChangeLogData = async () => {
+    const config = useRuntimeConfig();
    loading.value = true
     try {
       let url = `${config.public.apiUrl}/change-logs?$limit=100`

@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import { useAuth } from '../../composables/Authentication/useAuth';
 import type { Player, SortItem } from '../../types/players'
 
-const config = useRuntimeConfig();
+
 
 
 
@@ -32,6 +32,7 @@ const players = ref<Player[]>([])
 const total = ref(0)
 
 export const fetchFilteredUsers = async (personaId: number) => {
+  const config = useRuntimeConfig();
   await fetchPersonasConfig();
 
   
@@ -88,6 +89,7 @@ export const fetchFilteredUsers = async (personaId: number) => {
 };
 
 export const fetchData = async () => {
+  const config = useRuntimeConfig();
 
   loading.value = true
       try {
