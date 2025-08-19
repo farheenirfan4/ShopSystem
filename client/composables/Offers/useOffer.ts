@@ -10,7 +10,8 @@ import { useAuth } from "../Authentication/useAuth" // <-- get token from here
 //const API_URL = "http://localhost:3030/offers"
 
 export function useOffers() {
-  const { token } = useAuth() // ✅ get token directly
+  const { token } = useAuth() 
+  const config = useRuntimeConfig() 
 
   const offers = ref<Offer[]>([])
   const loading = ref(false)
@@ -25,7 +26,7 @@ export function useOffers() {
 
   // 1️⃣ Retrieve all offers
   const fetchOffers = async () => {
-    const config = useRuntimeConfig();
+    //const config = useRuntimeConfig();
     loading.value = true
     error.value = null
     try {
@@ -46,7 +47,7 @@ export function useOffers() {
   // 2️⃣ Add offer
   const addOffer = async (newOffer: Partial<Offer>) => {
     try {
-      const config = useRuntimeConfig();
+      //const config = useRuntimeConfig();
       //validateBeforeSend(n
       // ewOffer)
       const res = await fetch(`${config.public.apiUrl}/offers`, {
@@ -65,7 +66,7 @@ export function useOffers() {
 
   // 3️⃣ Update offer
   const updateOffer = async (id: string, updatedOffer: Offer) => {
-    const config = useRuntimeConfig();
+    //const config = useRuntimeConfig();
     try {
       //validateBeforeSend(updatedOffer)
       const res = await fetch(`${config.public.apiUrl}/offers/${id}`, {
@@ -85,7 +86,7 @@ export function useOffers() {
 
   // 4️⃣ Delete offer
   const deleteOffer = async (id: string) => {
-    const config = useRuntimeConfig();
+    //const config = useRuntimeConfig();
     try {
       const res = await fetch(`${config.public.apiUrl}/offers/${id}`, {
         method: "DELETE",
