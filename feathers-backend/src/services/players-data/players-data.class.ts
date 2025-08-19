@@ -102,7 +102,7 @@ if (query?.$levelRange) {
 }
 
 
-if (query?.$totalDeposit || query?.$Mmr) {
+if (query?.$totalDeposit) {
     
     knexQuery = knexQuery
         .from('storage as p')
