@@ -46,13 +46,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Handle range operators like $Mmr[min] and $Mmr[max]
     const rangeMatch = key.match(/^\$(\w+)\[(min|max)\]$/);
-    if (rangeMatch) {
-      const field = rangeMatch[1];
-      const operator = rangeMatch[2] === 'min' ? '$gte' : '$lte';
-      query[field] = query[field] || {};
-      query[field][operator] = Number(value);
-      delete query[key]; // remove old key
-    }
+if (rangeMatch) {
+  const field = rangeMatch[1];        // e.g., 'levelRange', 'Mmr'
+  query[field] = query[field] || {};
+  query[field][rangeMatch[2]] = Number(value); // keep as min/max
+  delete query[key];                  // remove old key
+}
   }
 
   req.query = query;
