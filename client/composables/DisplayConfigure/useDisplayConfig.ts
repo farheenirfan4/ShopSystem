@@ -1,7 +1,7 @@
 // composables/DisplayConfig/useDisplayConfigService.ts
 import { ref } from 'vue'
 import { useAuth } from '../../composables/Authentication/useAuth'
-const config = useRuntimeConfig();
+//const config = useRuntimeConfig();
 
 //const API_URL = 'http://localhost:3030/display-config' // Feathers endpoint
 
@@ -14,6 +14,7 @@ export interface DisplayConfig {
 }
 
 export const useDisplayConfigService = () => {
+  const config = useRuntimeConfig();
   const { user, token } = useAuth()
 
   const displayConfigs = ref<any[]>([])
