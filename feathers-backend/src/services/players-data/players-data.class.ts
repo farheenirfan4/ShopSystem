@@ -128,15 +128,17 @@ if (query?.$totalDeposit) {
 }
 
 if (query?.$Mmr) {
-        const { min, max } = query.$Mmr;
-        knexQuery = knexQuery
-            .where('p.collection', 'Progress')
-            .andWhere('p.key', 'PlayerRatingData')
-            .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) >= ?`, [min])
-.andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) <= ?`, [max]);
-console.log('Knex query:', knexQuery.toQuery());
-        delete query.$Mmr;
-    }
+  const { min, max } = query.$Mmr;
+
+  knexQuery = knexQuery
+    .join('storage as p', 'p.user_id', 'u.id')
+    .where('p.collection', 'Progress')
+    .andWhere('p.key', 'PlayerRatingData')
+    .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) >= ?`, [min])
+    .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) <= ?`, [max]);
+
+  delete query.$Mmr;
+}
 
   if (query?.$count) {
     const result = await knexQuery.count('* as count').first() as Record<string, string | number> | undefined;
