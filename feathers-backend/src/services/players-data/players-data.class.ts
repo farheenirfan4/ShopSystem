@@ -58,7 +58,7 @@ async find(
    let knexQuery = knex('users as u')
   .select('u.username', 'u.id');
 
-if (query?.$includeCashDeposit || query?.$totalDeposit) {
+if (query?.$includeCashDeposit || query?.$totalDeposit || query?.$Mmr) {
   knexQuery = knexQuery.join('storage as p', 'p.user_id', 'u.id');
 }
 
