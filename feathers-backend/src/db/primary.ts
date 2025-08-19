@@ -1,6 +1,7 @@
-import knex from 'knex'
+import knex from 'knex';
+import dotenv from "dotenv";
 
-export const primaryDb = knex({
+export const primaryDb1 = knex({
   client: 'pg',
   connection: {
     host: 'localhost',
@@ -10,3 +11,11 @@ export const primaryDb = knex({
     database: 'postgres' // this is my second DB
   }
 })
+
+export const primaryDb = knex({
+  client: "pg",
+  connection: {
+    connectionString: process.env.NEON_DB1_URL, // your first Neon DB
+    ssl: { rejectUnauthorized: false }
+  }
+});
