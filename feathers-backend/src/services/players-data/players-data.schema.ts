@@ -79,7 +79,7 @@ export const playersDataPatchResolver = resolve<PlayersDataPatch, HookContext<Pl
 export const playersDataQuerySchema = {
   $id: 'PlayersDataQuery',
   type: 'object',
-  additionalProperties: false,
+  additionalProperties: true,
   properties: {
     ...querySyntax(playersDataSchema.properties),
     'metadata.EarningData.CashEarned': { type: 'number' },
