@@ -68,7 +68,7 @@ if (query?.$isPaying !== undefined) {
 }
 
 // $levelRange filter
-if (query?.$levelRange) {
+if (query?.$levelRange !== undefined) {
   const { min, max } = query.$levelRange;
   knexQuery = knexQuery
     .whereRaw(`(metadata->'CareerProgressData'->>'Level')::INT >= ?`, [min])
@@ -76,7 +76,7 @@ if (query?.$levelRange) {
 }
 
 // $totalDeposit filter
-if (query?.$totalDeposit) {
+if (query?.$totalDeposit !== undefined) {
   const { min, max } = query.$totalDeposit;
   knexQuery = knexQuery
     .where('p.collection', 'UserState')
@@ -86,7 +86,7 @@ if (query?.$totalDeposit) {
 }
 
 // $Mmr filter
-if (query?.$Mmr) {
+if (query?.$Mmr !== undefined) {
   const { min, max } = query.$Mmr;
   knexQuery = knexQuery
     .where('p.collection', 'Progress')
