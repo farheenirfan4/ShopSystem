@@ -29,7 +29,7 @@
        </template>
         <!-- Status Chip with dynamic color -->
         <template #item.status="{ item }">
-          <v-chip text-color="white" size="small" >
+          <v-chip text-color="white" size="small" :color="item.statusColor" variant="flat" rounded>
             {{ item.status }}
           </v-chip>
         </template>
@@ -81,7 +81,7 @@
   <VBtn
     size="small"
     icon="mdi-delete-outline"
-    color="red"
+    color="black"
     @click="handleDeleteOffer(item.id)"
   />
 </div>
@@ -314,7 +314,7 @@ const snackbar = ref({
 });
 
 const headers = [
-  { title: "Title", key: "title" , sortable: false},
+  { title: "Title", key: "title" , sortable: false, width: '250px'},
   { title: "Description", key: "description", sortable: false },
   { title: "Price", key: "price" },
   { title: "Discount (%)", key: "discountPercentage" },
@@ -341,11 +341,27 @@ const minDateTime = computed(() => {
 
 // Computed properties
 const offersWithStatus = computed(() => {
-  return offers.value.map(offer => ({
-    ...offer,
-    status: getOfferStatus(offer),
-  }));
+  return offers.value.map(offer => {
+    const status = getOfferStatus(offer);
+    const statusColor = getStatusColor(status);
+
+    return {
+      ...offer,
+      status: status,
+      statusColor: statusColor, // Assign the color here
+    };
+  });
 });
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'active': return '#b7e4c7'; 
+    case 'expired': return '#e5383b';
+    case 'inactive': return '#bde0fe';
+    case 'upcoming': return '#fae588'; 
+    default: return 'grey';
+  }
+};
 
 
 function formatUTCToLocal(utcDate: string | undefined) {
@@ -371,16 +387,6 @@ const repeatDetailsOptions = computed(() => {
 }
   return [];
 });
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'Active': return 'green';
-    case 'Expired': return 'red';
-    case 'Scheduled': return 'blue';
-    default: return 'grey';
-  }
-};
-
 // Dialog functions
 const openAddDialog = () => {
   newOffer.value = {
@@ -426,10 +432,6 @@ function editOffer(item: Offer & { _id?: string }) {
   editingOfferId.value = item._id || item.id || null;
   editModel.value = true;
   isAddDialogOpen.value = true;
-}
-
-function showSnackbar(message: string) {
-  snackbar.value = { show: true, text: message, color: 'error', timeout: 3000 };
 }
 
 // API interactions

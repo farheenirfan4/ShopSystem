@@ -24,6 +24,7 @@ import {
   type ChartOptions
 } from 'chart.js'
 
+
 import type { ChartData } from 'chart.js'
 
 type AggregatedResult = { date: string; count: number }[]
@@ -70,8 +71,9 @@ const chartOptions = ref<ChartOptions<'bar'>>({
 })
 
 onMounted(async () => {
+   const config = useRuntimeConfig();
   try {
-    const res = await $fetch<AggregatedResult>('/players-data', {
+    const res = await $fetch<AggregatedResult>(`${config.public.apiUrl}/players-data`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('feathers-jwt')}` },
       params: {
         $aggregateByDate: true
