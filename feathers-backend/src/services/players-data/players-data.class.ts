@@ -91,8 +91,8 @@ if (query?.$Mmr !== undefined) {
   knexQuery = knexQuery
     .where('p.collection', 'Progress')
     .andWhere('p.key', 'PlayerRatingData')
-    .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) >= ?`, [min])
-    .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) <= ?`, [max]);
+    .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) >= ?`, [100])
+    .andWhereRaw(`CAST(p.value ->> 'Mou' AS numeric) <= ?`, [200]);
 }
 
   if (query?.$count) {
