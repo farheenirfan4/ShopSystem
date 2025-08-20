@@ -129,6 +129,19 @@ const handleUpdateUser = async () => {
 }
 
 const handleDeleteUser = async (id: string) => {
+  const targetUser = userData.value.find(u => u.id === id)
+
+  if (!targetUser) {
+    alert('User not found')
+    return
+  }
+
+  // Prevent deleting admins
+  if (targetUser.roles?.includes('admin')) {
+    alert('Admin users cannot be deleted')
+    return
+  }
+
   if (!confirm('Are you sure you want to delete this user?')) return
   await deleteUser(id)
 }
