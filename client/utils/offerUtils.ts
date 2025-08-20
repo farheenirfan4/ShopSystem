@@ -41,18 +41,11 @@ export function getOfferStatus(offer: Offer, now: Date = new Date()): OfferStatu
   const campaignStart = new Date(offer.startDateUTC); // includes time
   const campaignEnd = new Date(offer.endDateUTC);     // includes time
 
-
-  //console.log('Campaign Start:', campaignStart);
-  //console.log('Campaign End:', campaignEnd);
-  //console.log('Current Time:', now);
-
-  
   if (now < campaignStart) return 'upcoming';
   if (now > campaignEnd) return 'expired';
 
   
   if (offer.repeatPatterns === 'none' || offer.repeatPatterns === 'daily') {
-    // Check if current time is within the campaign start/end hours
     const startTime = campaignStart.getTime();
     const endTime = campaignEnd.getTime();
     return now.getTime() >= startTime && now.getTime() <= endTime ? 'active' : 'inactive';
@@ -72,18 +65,16 @@ export function getOfferStatus(offer: Offer, now: Date = new Date()): OfferStatu
   }
 
   // Monthly repeat
+
   if (offer.repeatPatterns === 'monthly') {
-    const monthsOfYear = [
-      'january','february','march','april','may','june',
-      'july','august','september','october','november','december'
-    ];
-    const nowMonth = now.getMonth();
-    const repeatMonths = (offer.repeatDetails || []).map(m => monthsOfYear.indexOf(m.toLowerCase()));
-    const isMonthActive = repeatMonths.includes(nowMonth);
+    const nowDate = now.getDate();
+    const repeatDates = (offer.repeatDetails || []).map(d => parseInt(d, 10));
+    const isDateActive = repeatDates.includes(nowDate);
 
     const startTime = campaignStart.getTime();
     const endTime = campaignEnd.getTime();
-    return isMonthActive && now.getTime() >= startTime && now.getTime() <= endTime ? 'active' : 'inactive';
+    return isDateActive && now.getTime() >= startTime && now.getTime() <= endTime ? 'active' : 'inactive';
+    
   }
 
   return 'inactive';

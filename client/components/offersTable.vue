@@ -146,7 +146,7 @@
                 outlined
               ></v-select>
             </v-col>
-            <v-col cols="6" v-if="newOffer.repeatPatterns !== 'none'">
+            <v-col cols="6" v-if="newOffer.repeatPatterns !== 'none' && newOffer.repeatPatterns !== 'daily'">
               <v-select
                 label="Repeat Details"
                 v-model="newOffer.repeatDetails"
@@ -360,11 +360,15 @@ const repeatDetailsOptions = computed(() => {
     return ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   }
   if (pattern === 'monthly') {
-    return [
-      'january', 'february', 'march', 'april', 'may', 'june',
-      'july', 'august', 'september', 'october', 'november', 'december'
-    ];
+  const daysInMonth = 31;
+  const days = [];
+
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push(String(i));
   }
+
+  return days;
+}
   return [];
 });
 
