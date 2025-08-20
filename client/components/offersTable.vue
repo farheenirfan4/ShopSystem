@@ -231,7 +231,7 @@
             <v-progress-circular indeterminate color="primary" />
           </div>
 
-          <v-alert v-if="!userDialogLoading && filteredUsers.length === 0" type="warning" variant="tonal">
+          <v-alert v-else-if="!userDialogLoading && filteredUsers.length === 0" type="warning" variant="tonal">
             No users found for this persona.
           </v-alert>
 
