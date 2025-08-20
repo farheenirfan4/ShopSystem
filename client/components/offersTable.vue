@@ -227,9 +227,9 @@
         </v-card-subtitle>
         
         <v-card-text>
-          <v-alert v-if="userDialogLoading" type="info" variant="tonal">
-            Loading users...
-          </v-alert>
+          <div v-if="userDialogLoading" class="d-flex justify-center pa-6">
+            <v-progress-circular indeterminate color="primary" />
+          </div>
 
           <v-alert v-if="!userDialogLoading && filteredUsers.length === 0" type="warning" variant="tonal">
             No users found for this persona.
@@ -412,6 +412,7 @@ async function openUserDialog(personaId: number) {
   selectedPersonaId.value = personaId;
   isUserDialogOpen.value = true;
   userDialogLoading.value = true;
+  filteredUsers.value.splice(0); 
   try {
     await fetchFilteredUsers(personaId);
   } finally {
