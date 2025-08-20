@@ -85,10 +85,6 @@ if (query?.$totalDeposit !== undefined) {
     .andWhereRaw(`CAST(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit' AS numeric) <= ?`, [max]);
 }
 
-if (query?.$Mmr === undefined) {
-  console.log('No $Mmr filter applied, skipping Mmr-related joins');
-}
-
 // $Mmr filter
 if (query?.$Mmr !== undefined) {
   const { min, max } = query.$Mmr;

@@ -79,15 +79,20 @@ export function useAuth() {
   }
 
   const logout = () => {
-    console.log('[useAuth] logout() called')
+    //console.log('[useAuth] logout() called')
     token.value = null
     user.value = null
     if (process.client) {
       localStorage.removeItem('feathers-jwt')
       localStorage.removeItem('user')
-      console.log('[useAuth] Cleared localStorage')
+      //console.log('[useAuth] Cleared localStorage')
     }
   }
+
+  const isLoggedIn = () => {
+    return !!(token.value && user.value)
+  }
+  const initAuth = () => loadUserFromStorage()
 
   return {
     user,
@@ -95,6 +100,8 @@ export function useAuth() {
     loading,
     error,
     login,
-    logout
+    logout,
+    isLoggedIn,
+    initAuth
   }
 }

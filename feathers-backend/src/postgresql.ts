@@ -16,9 +16,6 @@ export const postgresql1 = (app: Application) => {
   app.set('postgresqlClient', db)
 }
 
-// For more information about this file see https://dove.feathersjs.com/guides/cli/databases.html
-
-
 export const postgresql = (app: Application) => {
   const db = knex({
     client: 'pg',

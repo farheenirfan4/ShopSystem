@@ -24,6 +24,9 @@
             {{ item.title }}
           </a>
         </template>
+       <template #item.product="{ item }">
+         <span>{{ (item.product as any).name }}</span>
+       </template>
         <!-- Status Chip with dynamic color -->
         <template #item.status="{ item }">
           <v-chip text-color="white" size="small" >

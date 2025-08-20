@@ -75,7 +75,6 @@ export const createClient = <Configuration = any,>(
   client.configure(connection)
   client.configure(authenticationClient(authenticationOptions))
   client.set('connection', connection)
-
   client.configure(userClient)
   client.configure(playersDataClient)
   client.configure(changeLogsClient)

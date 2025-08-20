@@ -19,7 +19,6 @@ export const offersClient = (client: ClientApplication) => {
   })
 }
 
-// Add this service to the client service type index
 declare module '../../client' {
   interface ServiceTypes {
     [offersPath]: OffersClientService

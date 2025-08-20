@@ -45,16 +45,10 @@ export class OffersService<ServiceParams extends Params = OffersParams> extends 
         .groupBy('dates.day')
         .orderBy('dates.day', 'asc')
 
-      // ✅ Return the results in the correct FeathersJS paginated format
-      //return {
-       // data: results,
-       // total: results.length,
-       // limit: results.length,
-        //skip: 0
-      //} as Paginated<Offers>;
+      
     }
 
-    // ✅ Fallback to the default KnexService find method
+    
     //    This is crucial to ensure the service works for all other queries
     return super.find(params)
   }
