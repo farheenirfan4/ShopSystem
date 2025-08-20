@@ -16,8 +16,8 @@ export interface User {
 
 const { token, user } = useAuth(); // get token & user info
 //const API_URL = 'http://localhost:3030/users';
-const config = useRuntimeConfig();
-const API_BASE_URL = config.public.apiBase;
+//const config = useRuntimeConfig();
+
 
 const userData = ref<User[]>([]);
 const isLoading = ref(false);
@@ -36,6 +36,7 @@ const getHeaders = (isJSON = true) => {
 
 // Fetch all users
 const fetchUsers = async () => {
+  const config = useRuntimeConfig();
   isLoading.value = true;
   try {
     const res = await fetch(`${config.public.apiUrl}/users`, {
@@ -57,6 +58,7 @@ const fetchUsers = async () => {
 
 //  Create a new user
 const createUser = async (newUser: { username: string; email: string; password: string; roles?: string[] }) => {
+  const config = useRuntimeConfig();
   try {
     const res = await fetch(`${config.public.apiUrl}/users`, {
       method: 'POST',
@@ -73,6 +75,7 @@ const createUser = async (newUser: { username: string; email: string; password: 
 
 //  Update an existing user
 const updateUser = async (id: string, updates: Partial<{ username: string; email: string; roles?: string[] }>) => {
+  const config = useRuntimeConfig();
   try {
     const res = await fetch(`${config.public.apiUrl}/users/${id}`, {
       method: 'PATCH',
@@ -90,6 +93,7 @@ const updateUser = async (id: string, updates: Partial<{ username: string; email
 
 //  Delete a user
 const deleteUser = async (id: string) => {
+  const config = useRuntimeConfig();
   try {
     const res = await fetch(`${config.public.apiUrl}/users/${id}`, {
       method: 'DELETE',
