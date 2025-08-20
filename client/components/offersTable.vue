@@ -1,5 +1,5 @@
 <template>
-  <v-container class="mt-8">
+  <v-container class="mt-16">
     <v-card>
       <v-card-title class="d-flex align-center">
   <span class="text-h5 font-weight-bold">Offers List</span>
@@ -314,7 +314,7 @@ const snackbar = ref({
 });
 
 const headers = [
-  { title: "Title", key: "title" , sortable: false, width: '250px'},
+  { title: "Title", key: "title" , sortable: false},
   { title: "Description", key: "description", sortable: false },
   { title: "Price", key: "price" },
   { title: "Discount (%)", key: "discountPercentage" },
@@ -437,8 +437,6 @@ function editOffer(item: Offer & { _id?: string }) {
 // API interactions
 async function saveOffer() {
 
-
-
   try {
     if (newOffer.value.repeatPatterns === 'none') {
       newOffer.value.repeatDetails = [];
@@ -481,6 +479,8 @@ async function saveOffer() {
       endDateUTC: toUTCISOString(newOffer.value.endDateUTC),
       product: stringifyProductName(newOffer.value.product as string)
     };
+    delete (offerToSave as any).status;
+    delete (offerToSave as any).statusColor;
 
 
     if (editModel.value && editingOfferId.value) {

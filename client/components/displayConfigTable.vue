@@ -133,7 +133,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <VContainer class="mt-8">
+  <VContainer class="mt-16">
     <VCard>
       <VCardTitle class="d-flex justify-space-between align-center mb-4 ms-2">
         <span class="text-h5 font-weight-bold">Display Configuration</span>

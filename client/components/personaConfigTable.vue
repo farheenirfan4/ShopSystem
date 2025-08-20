@@ -112,7 +112,7 @@ const { data: personasConfig, pending: isFetching, refresh } = await useAsyncDat
 </script>
 
 <template>
-  <VContainer class="mt-8">
+  <VContainer class="mt-16">
     <VCard>
       <VCardTitle class="d-flex justify-space-between align-center">
         <span class="text-h5 font-weight-bold mb-4 ma-2">Personas Configuration</span>
