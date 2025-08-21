@@ -59,20 +59,64 @@
 
       </v-data-table>
       <!-- User Details Dialog -->
-      <v-dialog v-model="dialog" max-width="500">
-        <v-card>
-          <v-card-title>User Details</v-card-title>
-          <v-card-text>
-            <pre>{{ selectedUser }}</pre>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer />
-            <v-btn @click="copyToClipboard" color="primary">Copy</v-btn>
-            <v-btn @click="dialog = false" color="secondary">Close</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+     <v-dialog v-model="dialog" max-width="700">
+  <v-card>
+    <v-card-title>User Details</v-card-title>
+    <v-divider></v-divider>
 
+    <v-card-text>
+      <!-- Basic Info -->
+      <v-row>
+        <v-col cols="6">
+          <strong>ID:</strong> {{ selectedUser?.id }}
+        </v-col>
+        <v-col cols="6">
+          <strong>Username:</strong> {{ selectedUser?.username }}
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="6">
+          <strong>Display Name:</strong> {{ selectedUser?.display_name }}
+        </v-col>
+        <v-col cols="6">
+          <strong>Email:</strong> {{ selectedUser?.email }}
+        </v-col>
+      </v-row>
+
+      <!-- Wallet -->
+      <v-divider class="my-2"></v-divider>
+      <h4>Wallet</h4>
+      <v-row>
+        <v-col cols="6"><strong>Cash:</strong> {{ selectedUser?.metadata.EarningData.CashEarned }}</v-col>
+        <v-col cols="6"><strong>Coins:</strong> {{ selectedUser?.metadata.EarningData.Ranking }}</v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="6"><strong>Tickets:</strong> {{ selectedUser?.metadata }}</v-col>
+        <v-col cols="6"><strong>Bonus Cash:</strong> {{ selectedUser?.metadata }}</v-col>
+      </v-row>
+
+      <!-- Deposit -->
+      <v-divider class="my-2"></v-divider>
+      <h4>Deposits</h4>
+      <p><strong>Total Deposit:</strong> {{ selectedUser?.metadata || "0" }}</p>
+
+      <!-- Career Progress -->
+      <v-divider class="my-2"></v-divider>
+      <h4>Career Progress</h4>
+      <v-row>
+        <v-col cols="6"><strong>Level:</strong> {{ selectedUser?.metadata?.CareerProgressData?.Level }}</v-col>
+        <v-col cols="6"><strong>XP:</strong> {{ selectedUser?.metadata?.CareerProgressData?.XP }}</v-col>
+      </v-row>
+    </v-card-text>
+
+    <v-card-actions>
+      <v-spacer />
+      <v-btn @click="copyToClipboard" color="primary" variant="flat">Copy</v-btn>
+      <v-btn @click="dialog = false" color="secondary" variant="tonal">Close</v-btn>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
 
       <!-- Edit User Dialog -->
       <v-dialog v-model="editDialog" max-width="600">
@@ -159,7 +203,7 @@ const headers = [
 
 // For viewing user details dialog
 const dialog = ref(false)
-const selectedUser = ref({})
+const selectedUser = ref<Player | null>(null)
 
 function submitEditWithValidation() {
 
