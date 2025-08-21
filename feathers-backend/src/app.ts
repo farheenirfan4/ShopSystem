@@ -54,7 +54,7 @@ const allowedOrigins = [
 
 const app: Application = express(feathers())
 
-app.use(compression())
+//app.use(compression())
 
 // --- CORS ---
 //console.log('[app.ts] Configuring CORS with allowed origins:', allowedOrigins)
