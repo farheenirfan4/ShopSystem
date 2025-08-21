@@ -92,14 +92,14 @@
         <v-col cols="6"><strong>Coins:</strong> {{ selectedUser?.metadata.EarningData.Ranking }}</v-col>
       </v-row>
       <v-row>
-        <v-col cols="6"><strong>Tickets:</strong> {{ selectedUser?.metadata }}</v-col>
-        <v-col cols="6"><strong>Bonus Cash:</strong> {{ selectedUser?.metadata }}</v-col>
+        <v-col cols="6"><strong>Tickets:</strong> {{ selectedUser?.metadata.IsBotUser }}</v-col>
+        <v-col cols="6"><strong>Bonus Cash:</strong> {{ selectedUser?.metadata.StataData?.WinRatio }}</v-col>
       </v-row>
 
       <!-- Deposit -->
       <v-divider class="my-2"></v-divider>
       <h4>Deposits</h4>
-      <p><strong>Total Deposit:</strong> {{ selectedUser?.metadata || "0" }}</p>
+      <p><strong>Total Deposit:</strong> {{ selectedUser?.metadata.EarningData || "0" }}</p>
 
       <!-- Career Progress -->
       <v-divider class="my-2"></v-divider>
