@@ -31,6 +31,10 @@ const productionConfig = {
   port: 3030,
   public: './public/',
   origins: [process.env.FRONTEND_URL || 'http://localhost:3000'],
+  paginate: {
+    default: 50,  
+    max: 500   
+  },
   authentication: {
     entity: 'user',
     service: 'users',
