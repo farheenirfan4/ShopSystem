@@ -25,31 +25,27 @@ export function usePlayerService() {
   const debouncedFetchData = debounce(() => fetchData(), 300)
 
   const fetchData = async () => {
-    const config = useRuntimeConfig();
-   loading.value = true
-    try {
-      let url = `${config.public.apiUrl}/players-data?$includeCashDeposit=true`
+  const config = useRuntimeConfig()
+  loading.value = true
+  try {
+    const res = await useAuthFetch<{ total: number; data: Player[] }>(
+      `${config.public.apiUrl}/players-data?$limit=100&$includeCashDeposit=true`
+    )
 
-    
-      
-      const res: { total: number; data: Player[] } | Player[] = await useAuthFetch(url)
-      users.value = (Array.isArray(res) ? res : res.data).map(user => ({
-        ...user,
-        metadata: {
-          ...user.metadata,
-          IsBotUser: String(user.metadata?.IsBotUser ?? '')
-        }
-      }))
-      total.value = Array.isArray(res) ? res.length : res.total
-      
-
-     
-    } catch (e) {
-      console.error('Failed to fetch users:', e)
-    } finally {
-      loading.value = false
-    }
+    users.value = res.data.map(user => ({
+      ...user,
+      metadata: {
+        ...user.metadata,
+        IsBotUser: String(user.metadata?.IsBotUser ?? '')
+      }
+    }))
+    total.value = res.total
+  } catch (e) {
+    console.error('Failed to fetch users:', e)
+  } finally {
+    loading.value = false
   }
+}
 
  const filteredUsers = computed(() =>
   users.value.filter(user => {

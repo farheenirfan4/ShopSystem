@@ -101,7 +101,7 @@ export const fetchData = async () => {
 
         })
         const data = await response.json();
-        players.value = data ?? []
+        players.value = data.data ?? []
         console.log('Players data with deposited cash: ', data)
         //total.value = Array.isArray(response) ? response.length : response.total
         

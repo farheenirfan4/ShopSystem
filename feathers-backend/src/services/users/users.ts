@@ -56,40 +56,40 @@ export const user = (app: Application) => {
   }
       ],
       get: [
-        authenticate('jwt'), // 👈 Always authenticate first
+        authenticate('jwt'), 
         async (context) => {
           const { id, params } = context;
           const user = params.user;
 
-          // Admins can see any user. A regular user can only see their own profile.
+         
           if (user && user.id !== id && !user.roles?.includes('admin')) {
             throw new Forbidden('You are not allowed to get this user profile.');
           }
           return context;
         }
       ],
-      // The `create` method is for user registration, so it should not be authenticated.
+      
       create: [
         schemaHooks.validateData(userDataValidator),
         schemaHooks.resolveData(userDataResolver)
       ],
       update: [
-        authenticate('jwt'), // 👈 Always authenticate first
-        restrictByRole('admin'), // Then check for the role
-        preventSelfRoleChange(), // And prevent self-role changes
+        authenticate('jwt'), 
+        restrictByRole('admin'), 
+        preventSelfRoleChange(), 
         schemaHooks.validateData(userPatchValidator),
         schemaHooks.resolveData(userPatchResolver)
       ],
       patch: [
-        authenticate('jwt'), // 👈 Always authenticate first
-        restrictByRole('admin'), // Then check for the role
-        preventSelfRoleChange(), // And prevent self-role changes
+        authenticate('jwt'), 
+        restrictByRole('admin'), 
+        preventSelfRoleChange(), 
         schemaHooks.validateData(userPatchValidator),
         schemaHooks.resolveData(userPatchResolver)
       ],
       remove: [
-        authenticate('jwt'), // 👈 Always authenticate first
-        restrictByRole('admin') // Then check for the role
+        authenticate('jwt'), 
+        restrictByRole('admin') 
       ]
     },
     after: {
@@ -105,7 +105,7 @@ export const user = (app: Application) => {
   })
 }
 
-// Add this service to the service type index
+
 declare module '../../declarations' {
   interface ServiceTypes {
     [userPath]: UserService
