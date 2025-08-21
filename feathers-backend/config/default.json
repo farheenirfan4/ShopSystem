@@ -7,7 +7,7 @@
   ],
   "paginate": {
     "default": 100,
-    "max": 12078
+    "max": 1000
   },
 
   "authentication": {
