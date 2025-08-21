@@ -66,7 +66,9 @@ if (query?.$includeCashDeposit || query?.$totalDeposit || query?.$Mmr) {
       knex.raw(
         `CAST(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit' AS numeric) as deposit_amount`
       )
-    );
+    )
+    .orderBy('u.id') // required with distinctOn
+  .limit(params.query?.$limit || 10)
 }
 
 // $isPaying filter
