@@ -1,8 +1,5 @@
 <script setup lang="ts">
-// ✅ Import Nuxt auto-imported composables from #imports
 import { ref, computed, onMounted } from '#imports'
-
-// ✅ Import avatars (put them inside ~/assets/images/avatars or /public/images/avatars)
 import avatar1 from '~/assets/images/avatars/avatar-1.png'
 import avatar2 from '~/assets/images/avatars/avatar-2.png'
 import avatar3 from '~/assets/images/avatars/avatar-3.png'
@@ -11,11 +8,7 @@ import avatar5 from '~/assets/images/avatars/avatar-5.png'
 import avatar6 from '~/assets/images/avatars/avatar-6.png'
 import avatar7 from '~/assets/images/avatars/avatar-7.png'
 import avatar8 from '~/assets/images/avatars/avatar-8.png'
-
-// ✅ Import your validator composable
 import { useUserValidator } from '~/composables/validators/useUserValidator'
-
-// ✅ Import everything from your user composable
 import {
   userData,
   fetchUsers,
@@ -24,7 +17,6 @@ import {
   deleteUser
 } from '~/composables/users/useUser'
 
-// Type definition
 interface User {
   id: string
   email: string
@@ -41,25 +33,23 @@ const headers = [
 
 const { validateUserForm } = useUserValidator()
 
-// Snackbar
+
 const snackbar = ref({ show: false, text: '', color: 'error' })
 const showMessage = (text: string, color: 'success' | 'error' = 'error') => {
   snackbar.value = { show: true, text, color }
 }
 
-// Dialogs
 const isAddDialogOpen = ref(false)
 const isEditDialogOpen = ref(false)
 
-// New & Edit form state
+
 const newUser = ref({ username: '', email: '', password: '', roles: [] as string[] })
 const editUser = ref<User>({ id: '', email: '', roles: [], username: '', password: '' })
 
-// Handlers
+
 const handleAddUser = async () => {
 
-  const { valid, errors } = validateUserForm({
-    //id: editUser.value.id,
+const { valid, errors } = validateUserForm({
     username: newUser.value.username,
     email: newUser.value.email,
     roles: newUser.value.roles
@@ -91,7 +81,7 @@ const handleAddUser = async () => {
 } catch (err: any) {
   console.error("Failed to create user:", err)
 
-  // Extract backend message if it exists
+  
   const message = err?.response?.data?.message || err?.message || 'Failed to create user.'
   showMessage(message)
 } finally {
@@ -136,7 +126,7 @@ const handleDeleteUser = async (id: string) => {
     return
   }
 
-  // Prevent deleting admins
+
   if (targetUser.roles?.includes('admin')) {
     alert('Admin users cannot be deleted')
     return
@@ -162,7 +152,6 @@ const headersWithActions = [
   { title: 'Actions', key: 'actions', sortable: false }
 ]
 
-// ✅ Fetch users when page loads (Nuxt auto-imported onMounted)
 onMounted(async () => {
   await fetchUsers()
 })

@@ -22,6 +22,7 @@ import { services } from './services/index'
 import { channels } from './channels'
 import { registerChangeLogListener } from './listeners/changeLogs.listener'
 import { config as dotenvConfig } from 'dotenv';
+import compression from 'compression' 
 
 dotenvConfig();
 
@@ -52,6 +53,8 @@ const allowedOrigins = [
 //console.log('[app.ts] Initializing Feathers app..')
 
 const app: Application = express(feathers())
+
+app.use(compression())
 
 // --- CORS ---
 //console.log('[app.ts] Configuring CORS with allowed origins:', allowedOrigins)
