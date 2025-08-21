@@ -57,7 +57,12 @@ async find(
 
    let knexQuery = knex('users as u')
    .distinctOn('u.id')
-  .select('*');
+  .select('u.*')
+  .select(
+    knex.raw(
+      `CAST(p.value -> 'UsersCurrencyStatsData' ->> 'CashDeposit' AS numeric) as deposit_amount`
+    )
+  );
 
 if (query?.$includeCashDeposit || query?.$totalDeposit || query?.$Mmr) {
   knexQuery = knexQuery.join('storage as p', 'p.user_id', 'u.id');
