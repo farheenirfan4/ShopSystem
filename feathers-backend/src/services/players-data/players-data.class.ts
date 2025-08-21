@@ -56,6 +56,7 @@ async find(
 
 
    let knexQuery = knex('users as u')
+   .distinctOn('u.id')
   .select('*');
 
 if (query?.$includeCashDeposit || query?.$totalDeposit || query?.$Mmr) {
