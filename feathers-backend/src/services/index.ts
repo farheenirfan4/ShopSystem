@@ -18,5 +18,16 @@ export const services = (app: Application) => {
   app.configure(playersData)
   app.configure(user)
 
+  Object.keys(app.services).forEach(path => {
+    const service: any = app.service(path as any)
+    const options = service.options || {}
+
+    if (!options.paginate) {
+      service.options = {
+        ...options,
+        paginate: app.get('paginate')
+      }
+    }
+  })
 
 }
